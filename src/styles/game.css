@@ -54,6 +54,25 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; }
 .section-heading h2 { margin: 0; font-size: 11px; font-weight: 900; letter-spacing: .06em; text-transform: uppercase; }
 .section-heading span { color: #70869a; font-size: 10px; font-weight: 800; }
 .queue-section { margin-top: 10px; }
+.delivery-track {
+  position: relative; height: 19px; margin: 0 12px -1px; border: 3px solid #aebec7;
+  border-radius: 12px 12px 0 0; background: repeating-linear-gradient(90deg, #6f8792 0 8px, #7e949e 8px 16px);
+  box-shadow: inset 0 2px 3px #26394533;
+}
+.track-fill { height: 100%; border-radius: inherit; background: #8ad6a8; transition: width .22s ease-out; }
+.delivery-van {
+  position: absolute; z-index: 2; top: -10px; width: 30px; height: 21px;
+  transform: translateX(-50%); transition: left .22s ease-out;
+}
+.van-box, .van-cab { position: absolute; bottom: 4px; display: block; background: #f2c94c; border: 2px solid #805e16; }
+.van-box { left: 0; width: 18px; height: 14px; border-radius: 4px 2px 2px 4px; }
+.van-cab { right: 0; width: 13px; height: 11px; border-radius: 2px 5px 3px 2px; }
+.delivery-van b { position: absolute; bottom: 0; width: 7px; height: 7px; border: 2px solid #253342; border-radius: 50%; background: #91a3ad; }
+.delivery-van b:nth-of-type(1) { left: 4px; } .delivery-van b:nth-of-type(2) { right: 3px; }
+.depot {
+  position: absolute; right: -10px; top: -14px; padding: 2px 4px; border: 2px solid #526873;
+  border-radius: 4px; background: #fff; color: #526873; font-size: 6px; font-weight: 900;
+}
 .package-queue {
   display: flex; min-height: 49px; align-items: center; gap: 7px; padding: 7px 9px;
   overflow: hidden; border: 1px solid #ccdae2; border-radius: 16px; background: #fff;
@@ -83,6 +102,9 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; }
   position: relative; display: grid; height: clamp(50px, 14vw, 66px); place-items: center;
   border: 2px dashed #b5c8d2; border-radius: 13px; background: #e7f0f5;
 }
+.parking-slot--locked { border-style: solid; background: repeating-linear-gradient(135deg, #d1dce1 0 6px, #c5d2d8 6px 12px); color: #71838c; }
+.parking-slot--locked span { font-size: 20px; line-height: 1; }
+.parking-slot--locked b { font-size: 6px; letter-spacing: .12em; }
 .slot-number { position: absolute; top: 3px; left: 6px; color: #a6b7c0; font-size: 8px; font-weight: 900; }
 .parked-truck {
   display: grid; width: 82%; height: 70%; place-items: center; border: 2px solid var(--package-dark);
@@ -133,6 +155,7 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; }
 .truck.is-blocked { animation: shake .24s ease-in-out; filter: saturate(.5) brightness(.85); outline: 3px solid #ef3f53; }
 .parking-section.is-shaking { animation: shake .24s ease-in-out; }
 .hint { margin: 12px 0 8px; color: #708596; font-size: 10px; font-weight: 800; text-align: center; }
+.hint.is-loading::after { content: ""; display: inline-block; width: 5px; height: 5px; margin-left: 6px; border-radius: 50%; background: var(--yellow-dark); animation: loading-dot .6s ease-in-out infinite alternate; }
 
 .controls { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 .controls button {
@@ -182,6 +205,7 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; }
 @keyframes truck-arrive { from { opacity: 0; transform: scale(.65); } }
 @keyframes package-in { from { opacity: 0; transform: translateX(10px); } }
 @keyframes load-pop { 50% { transform: scale(1.5); } }
+@keyframes loading-dot { to { transform: scale(1.8); opacity: .35; } }
 @keyframes fade-in { from { opacity: 0; } }
 @keyframes modal-pop { from { opacity: 0; transform: translateY(25px) scale(.85); } }
 @keyframes confetti { to { transform: translate(20px, 110vh) rotate(540deg); } }
