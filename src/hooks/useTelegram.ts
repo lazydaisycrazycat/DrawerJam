@@ -9,10 +9,10 @@ export function useTelegram() {
     webApp?.enableClosingConfirmation?.();
   }, [webApp]);
 
-  return {
+  return useMemo(() => ({
     isTelegram: Boolean(webApp),
     impact: () => webApp?.HapticFeedback?.impactOccurred("light"),
     error: () => webApp?.HapticFeedback?.notificationOccurred("error"),
     success: () => webApp?.HapticFeedback?.notificationOccurred("success")
-  };
+  }), [webApp]);
 }

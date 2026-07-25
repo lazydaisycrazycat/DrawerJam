@@ -11,7 +11,7 @@ export default function App() {
   return (
     <main className="app-shell">
       <GameHeader level={game.level.id} onPrevious={game.previousLevel} />
-      <PackageQueue packages={game.state.packages} total={game.level.packages.length} />
+      <PackageQueue packages={game.state.packages} level={game.level} progress={game.state.conveyorProgress} />
       <Parking trucks={game.state.parking} size={game.level.parkingSize} fullFeedback={game.feedback?.kind === "parking"} />
       <GameBoard
         level={game.level}
@@ -24,7 +24,13 @@ export default function App() {
       </p>
       <Controls canUndo={game.canUndo} onUndo={game.undo} onRestart={game.restart} />
       {game.state.status !== "playing" && (
-        <ResultModal status={game.state.status} hasNext={game.hasNextLevel} onRestart={game.restart} onNext={game.nextLevel} />
+        <ResultModal
+          status={game.state.status}
+          dangerLoss={game.state.conveyorProgress >= 1}
+          hasNext={game.hasNextLevel}
+          onRestart={game.restart}
+          onNext={game.nextLevel}
+        />
       )}
     </main>
   );

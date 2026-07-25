@@ -29,6 +29,8 @@ export type LevelConfig = {
   cols: number;
   parkingSize: number;
   truckCapacity: number;
+  conveyorSeconds: number;
+  conveyorPoints: Array<{ x: number; y: number }>;
   trucks: Truck[];
   packages: PackageItem[];
 };
@@ -38,7 +40,8 @@ export type GameState = {
   trucks: Truck[];
   parking: ParkingTruck[];
   packages: PackageItem[];
+  conveyorProgress: number;
   status: GameStatus;
 };
 
-export type GameSnapshot = Pick<GameState, "trucks" | "parking" | "packages" | "status">;
+export type GameSnapshot = Pick<GameState, "trucks" | "parking" | "packages" | "conveyorProgress" | "status">;

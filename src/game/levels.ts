@@ -11,7 +11,8 @@ const packages = (sequence: TruckColor[]): PackageItem[] =>
 
 export const levels: LevelConfig[] = [
   {
-    id: 1, rows: 5, cols: 5, parkingSize: 3, truckCapacity: 3,
+    id: 1, rows: 5, cols: 5, parkingSize: 3, truckCapacity: 3, conveyorSeconds: 48,
+    conveyorPoints: [{ x: 18, y: 165 }, { x: 92, y: 165 }, { x: 92, y: 52 }, { x: 268, y: 52 }, { x: 268, y: 150 }, { x: 342, y: 150 }],
     trucks: [
       truck("red-1", 4, 1, "red", "down"),
       truck("blue-1", 0, 3, "blue", "up")
@@ -19,7 +20,8 @@ export const levels: LevelConfig[] = [
     packages: packages(["red", "blue"])
   },
   {
-    id: 2, rows: 5, cols: 5, parkingSize: 3, truckCapacity: 3,
+    id: 2, rows: 5, cols: 5, parkingSize: 3, truckCapacity: 3, conveyorSeconds: 45,
+    conveyorPoints: [{ x: 18, y: 170 }, { x: 68, y: 170 }, { x: 68, y: 55 }, { x: 178, y: 55 }, { x: 178, y: 150 }, { x: 292, y: 150 }, { x: 292, y: 42 }, { x: 342, y: 42 }],
     trucks: [
       truck("green-1", 2, 4, "green", "right"),
       truck("red-2", 2, 2, "red", "right"),
@@ -31,7 +33,8 @@ export const levels: LevelConfig[] = [
     packages: packages(["green", "red", "blue"])
   },
   {
-    id: 3, rows: 5, cols: 5, parkingSize: 3, truckCapacity: 3,
+    id: 3, rows: 5, cols: 5, parkingSize: 3, truckCapacity: 3, conveyorSeconds: 42,
+    conveyorPoints: [{ x: 18, y: 110 }, { x: 58, y: 45 }, { x: 132, y: 45 }, { x: 168, y: 112 }, { x: 210, y: 175 }, { x: 292, y: 175 }, { x: 342, y: 105 }],
     trucks: [
       truck("yellow-1", 1, 0, "yellow", "left"),
       truck("green-2", 4, 4, "green", "down"),
@@ -44,7 +47,8 @@ export const levels: LevelConfig[] = [
     packages: packages(["yellow", "green", "red", "blue"])
   },
   {
-    id: 4, rows: 6, cols: 6, parkingSize: 4, truckCapacity: 3,
+    id: 4, rows: 6, cols: 6, parkingSize: 4, truckCapacity: 3, conveyorSeconds: 38,
+    conveyorPoints: [{ x: 18, y: 170 }, { x: 85, y: 170 }, { x: 85, y: 42 }, { x: 275, y: 42 }, { x: 275, y: 170 }, { x: 190, y: 170 }, { x: 190, y: 100 }, { x: 342, y: 100 }],
     trucks: [
       truck("blue-4", 0, 5, "blue", "up"),
       truck("red-4a", 5, 1, "red", "down"),
@@ -59,7 +63,8 @@ export const levels: LevelConfig[] = [
     packages: packages(["blue", "red", "yellow", "green"])
   },
   {
-    id: 5, rows: 6, cols: 6, parkingSize: 4, truckCapacity: 3,
+    id: 5, rows: 6, cols: 6, parkingSize: 4, truckCapacity: 3, conveyorSeconds: 34,
+    conveyorPoints: [{ x: 18, y: 168 }, { x: 62, y: 168 }, { x: 62, y: 45 }, { x: 150, y: 45 }, { x: 150, y: 170 }, { x: 238, y: 170 }, { x: 238, y: 45 }, { x: 305, y: 45 }, { x: 342, y: 108 }],
     trucks: [
       truck("green-5", 2, 5, "green", "right"),
       truck("yellow-5", 2, 3, "yellow", "right"),
