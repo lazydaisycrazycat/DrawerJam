@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { createInitialState, createSnapshot, restoreSnapshot } from "../game/createInitialState";
 import { levels } from "../game/levels";
 import { addTruckToParking, canTruckExit, hasParkingSpace, removeTruckFromField } from "../game/movement";
-import { processPackages } from "../game/packageProcessing";
+import { canProcessNextPackage, processNextPackage } from "../game/packageProcessing";
 import type { GameSnapshot } from "../game/types";
 import { getGameStatus } from "../game/winLoseConditions";
 import { useTelegram } from "./useTelegram";
@@ -35,6 +35,7 @@ export function useGame() {
   const [state, setState] = useState(() => createInitialState(level));
   const [history, setHistory] = useState<GameSnapshot[]>([]);
   const [feedback, setFeedback] = useState<Feedback>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
   const telegram = useTelegram();
 
   const flash = useCallback((next: Feedback) => {
@@ -43,7 +44,7 @@ export function useGame() {
   }, []);
 
   const selectTruck = useCallback((truckId: string) => {
-    if (state.status !== "playing") return;
+    if (state.status !== "playing" || isProcessing) return;
     const truck = state.trucks.find((item) => item.id === truckId);
     if (!truck) return;
     if (!canTruckExit(truck, state.trucks, level.rows, level.cols)) {
@@ -59,21 +60,37 @@ export function useGame() {
     setHistory((items) => [...items, createSnapshot(state)]);
     const trucks = removeTruckFromField(state.trucks, truck.id);
     const addedParking = addTruckToParking(state.parking, truck);
-    const processed = processPackages(state.packages, addedParking);
-    const status = getGameStatus(processed.packages, processed.parking, level.parkingSize);
-    setState({ ...state, trucks, parking: processed.parking, packages: processed.packages, status });
+    setState({ ...state, trucks, parking: addedParking, status: "playing" });
+    setIsProcessing(true);
     telegram.impact();
-    if (status === "won") {
-      telegram.success();
-      const unlocked = Math.min(level.id + 1, levels.length);
-      saveUnlockedLevel(unlocked);
-    }
-  }, [flash, level, state, telegram]);
+  }, [flash, isProcessing, level, state, telegram]);
+
+  useEffect(() => {
+    if (!isProcessing) return;
+    const timer = window.setTimeout(() => {
+      if (canProcessNextPackage(state.packages, state.parking)) {
+        const next = processNextPackage(state.packages, state.parking);
+        const status = getGameStatus(next.packages, next.parking, level.parkingSize);
+        setState((current) => ({ ...current, packages: next.packages, parking: next.parking, status }));
+        if (status === "won") {
+          telegram.success();
+          saveUnlockedLevel(Math.min(level.id + 1, levels.length));
+          setIsProcessing(false);
+        }
+      } else {
+        const status = getGameStatus(state.packages, state.parking, level.parkingSize);
+        setState((current) => ({ ...current, status }));
+        setIsProcessing(false);
+      }
+    }, 210);
+    return () => window.clearTimeout(timer);
+  }, [isProcessing, level.id, level.parkingSize, state.packages, state.parking, telegram]);
 
   const restart = useCallback(() => {
     setState(createInitialState(level));
     setHistory([]);
     setFeedback(null);
+    setIsProcessing(false);
   }, [level]);
 
   const undo = useCallback(() => {
@@ -81,6 +98,7 @@ export function useGame() {
     if (!snapshot) return;
     setState((current) => restoreSnapshot(current, snapshot));
     setHistory((items) => items.slice(0, -1));
+    setIsProcessing(false);
   }, [history]);
 
   const openLevel = useCallback((index: number) => {
@@ -92,10 +110,11 @@ export function useGame() {
     setState(createInitialState(level));
     setHistory([]);
     setFeedback(null);
+    setIsProcessing(false);
   }, [level]);
 
   return {
-    level, levelIndex, state, feedback, canUndo: history.length > 0,
+    level, levelIndex, state, feedback, isProcessing, canUndo: history.length > 0 && !isProcessing,
     selectTruck, restart, undo,
     nextLevel: () => openLevel(levelIndex + 1),
     previousLevel: () => openLevel(levelIndex - 1),

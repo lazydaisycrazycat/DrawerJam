@@ -12,6 +12,7 @@ export function Parking({ trucks, size, fullFeedback }: { trucks: ParkingTruck[]
             {trucks[index] && <ParkedTruck truck={trucks[index]} />}
           </div>
         ))}
+        {size < 4 && <div className="parking-slot parking-slot--locked"><span>+</span><b>LOCKED</b></div>}
       </div>
     </section>
   );

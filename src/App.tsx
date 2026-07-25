@@ -11,7 +11,7 @@ export default function App() {
   return (
     <main className="app-shell">
       <GameHeader level={game.level.id} onPrevious={game.previousLevel} />
-      <PackageQueue packages={game.state.packages} />
+      <PackageQueue packages={game.state.packages} total={game.level.packages.length} />
       <Parking trucks={game.state.parking} size={game.level.parkingSize} fullFeedback={game.feedback?.kind === "parking"} />
       <GameBoard
         level={game.level}
@@ -19,7 +19,9 @@ export default function App() {
         blockedTruckId={game.feedback?.kind === "truck" ? game.feedback.id : undefined}
         onTruckClick={game.selectTruck}
       />
-      <p className="hint">Tap a truck with a clear path to its arrow</p>
+      <p className={`hint${game.isProcessing ? " is-loading" : ""}`}>
+        {game.isProcessing ? "Loading matching packages…" : "Tap a truck with a clear path to its arrow"}
+      </p>
       <Controls canUndo={game.canUndo} onUndo={game.undo} onRestart={game.restart} />
       {game.state.status !== "playing" && (
         <ResultModal status={game.state.status} hasNext={game.hasNextLevel} onRestart={game.restart} onNext={game.nextLevel} />
