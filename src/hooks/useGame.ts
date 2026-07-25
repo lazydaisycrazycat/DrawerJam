@@ -9,6 +9,7 @@ import { useTelegram } from "./useTelegram";
 
 type Feedback = { kind: "truck" | "parking"; id: string } | null;
 const storageKey = "parcel-jam-progress";
+const packageSpacing = 0.068;
 
 function readUnlockedLevel(): number {
   try {
@@ -70,21 +71,43 @@ export function useGame() {
     const timer = window.setTimeout(() => {
       if (canProcessNextPackage(state.packages, state.parking)) {
         const next = processNextPackage(state.packages, state.parking);
-        const status = getGameStatus(next.packages, next.parking, level.parkingSize);
-        setState((current) => ({ ...current, packages: next.packages, parking: next.parking, status }));
+        const conveyorProgress = Math.max(0.12, state.conveyorProgress - packageSpacing);
+        const status = getGameStatus(next.packages, next.parking, level.parkingSize, conveyorProgress);
+        setState((current) => current.status === "lost" ? current : {
+          ...current, packages: next.packages, parking: next.parking, conveyorProgress, status
+        });
         if (status === "won") {
           telegram.success();
           saveUnlockedLevel(Math.min(level.id + 1, levels.length));
           setIsProcessing(false);
         }
       } else {
-        const status = getGameStatus(state.packages, state.parking, level.parkingSize);
+        const status = getGameStatus(state.packages, state.parking, level.parkingSize, state.conveyorProgress);
         setState((current) => ({ ...current, status }));
         setIsProcessing(false);
       }
     }, 210);
     return () => window.clearTimeout(timer);
-  }, [isProcessing, level.id, level.parkingSize, state.packages, state.parking, telegram]);
+  }, [isProcessing, level.id, level.parkingSize, state.conveyorProgress, state.packages, state.parking, telegram]);
+
+  useEffect(() => {
+    const interval = window.setInterval(() => {
+      setState((current) => {
+        if (current.status !== "playing" || current.packages.length === 0) return current;
+        const conveyorProgress = Math.min(1, current.conveyorProgress + 0.1 / level.conveyorSeconds);
+        const status = getGameStatus(current.packages, current.parking, level.parkingSize, conveyorProgress);
+        return { ...current, conveyorProgress, status };
+      });
+    }, 100);
+    return () => window.clearInterval(interval);
+  }, [level.conveyorSeconds, level.parkingSize]);
+
+  useEffect(() => {
+    if (state.status === "lost") {
+      setIsProcessing(false);
+      telegram.error();
+    }
+  }, [state.status, telegram]);
 
   const restart = useCallback(() => {
     setState(createInitialState(level));

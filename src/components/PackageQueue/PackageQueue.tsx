@@ -1,26 +1,80 @@
-import type { PackageItem } from "../../game/types";
+import { useMemo } from "react";
+import type { LevelConfig, PackageItem } from "../../game/types";
 import { colorSymbols } from "../Truck/Truck";
 
-export function PackageQueue({ packages, total }: { packages: PackageItem[]; total: number }) {
-  const delivered = total - packages.length;
+type Point = { x: number; y: number };
+
+function pointOnRoute(points: Point[], progress: number): Point {
+  const segments = points.slice(1).map((point, index) => ({
+    from: points[index],
+    to: point,
+    length: Math.hypot(point.x - points[index].x, point.y - points[index].y)
+  }));
+  const total = segments.reduce((sum, segment) => sum + segment.length, 0);
+  let target = Math.max(0, Math.min(1, progress)) * total;
+  for (const segment of segments) {
+    if (target <= segment.length) {
+      const ratio = segment.length ? target / segment.length : 0;
+      return {
+        x: segment.from.x + (segment.to.x - segment.from.x) * ratio,
+        y: segment.from.y + (segment.to.y - segment.from.y) * ratio
+      };
+    }
+    target -= segment.length;
+  }
+  return points.at(-1) ?? { x: 0, y: 0 };
+}
+
+export function PackageQueue({ packages, level, progress }: {
+  packages: PackageItem[];
+  level: LevelConfig;
+  progress: number;
+}) {
+  const route = level.conveyorPoints.map(({ x, y }) => `${x},${y}`).join(" ");
+  const movingPackages = useMemo(() => packages.map((item, index) => ({
+    item,
+    index,
+    point: pointOnRoute(level.conveyorPoints, progress - index * 0.068),
+    visible: progress - index * 0.068 >= 0
+  })), [level.conveyorPoints, packages, progress]);
+
   return (
-    <section className="queue-section">
-      <div className="section-heading"><h2>Delivery route</h2><span>{packages.length} left</span></div>
-      <div className="delivery-track">
-        <span className="delivery-van" style={{ left: `${Math.min(91, 5 + (delivered / total) * 86)}%` }}>
-          <i className="van-box" /><i className="van-cab" /><b /><b />
-        </span>
-        <div className="track-fill" style={{ width: `${(delivered / total) * 100}%` }} />
-        <span className="depot">DEPOT</span>
+    <section className="conveyor-section">
+      <div className="section-heading">
+        <h2>Incoming packages</h2>
+        <span>{packages.length} left</span>
       </div>
-      <div className="package-queue">
-        {packages.slice(0, 8).map((item, index) => (
-          <div className={`package package--${item.color}${index === 0 ? " package--next" : ""}`} key={item.id}>
-            <i /><b>{colorSymbols[item.color]}</b>
-          </div>
-        ))}
-        {packages.length > 8 && <span className="queue-more">+{packages.length - 8}</span>}
-        {!packages.length && <span className="queue-empty">All packages delivered</span>}
+      <div className={`conveyor${progress > 0.82 ? " conveyor--danger" : ""}`}>
+        <svg viewBox="0 0 360 210" role="img" aria-label="Moving package conveyor">
+          <polyline className="conveyor-shadow" points={route} />
+          <polyline className="conveyor-belt" points={route} />
+          <polyline className="conveyor-markings" points={route} />
+          <g className="dispatch-zone">
+            <rect x="4" y="86" width="29" height="43" rx="7" />
+            <path d="M10 86V76h17v10M11 99h15M11 108h15M11 117h15" />
+          </g>
+          <g className="jam-zone">
+            <circle cx="343" cy="106" r="15" />
+            <path d="M343 96v13M343 116v1" />
+            <text x="343" y="137">JAM</text>
+          </g>
+          {movingPackages.map(({ item, index, point, visible }) => visible && (
+            <g
+              className={`moving-package moving-package--${item.color}${index === 0 ? " is-first" : ""}`}
+              key={item.id}
+              transform={`translate(${point.x} ${point.y})`}
+            >
+              <rect x="-11" y="-11" width="22" height="22" rx="5" />
+              <path d="M-11 -3H11M-3 -11V11" />
+              <text x="0" y="4">{colorSymbols[item.color]}</text>
+            </g>
+          ))}
+        </svg>
+        <div className="danger-meter">
+          <span>SAFE</span>
+          <i><b style={{ width: `${progress * 100}%` }} /></i>
+          <span>DANGER</span>
+        </div>
       </div>
     </section>
   );
