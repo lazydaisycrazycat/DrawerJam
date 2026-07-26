@@ -69,15 +69,15 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; }
 .conveyor-shadow, .conveyor-belt, .conveyor-markings {
   fill: none; stroke-linecap: round; stroke-linejoin: round;
 }
-.conveyor-shadow { stroke: #6f3c58; stroke-width: 30; filter: drop-shadow(0 5px 2px #64324655); }
-.conveyor-belt { stroke: #d64f91; stroke-width: 24; }
-.conveyor-markings { stroke: #ffb8df; stroke-width: 16; stroke-dasharray: 2 7; animation: belt-flow .8s linear infinite; }
+.conveyor-shadow { stroke: #6f3c58; stroke-width: 42; filter: drop-shadow(0 6px 3px #64324666); }
+.conveyor-belt { stroke: #d64f91; stroke-width: 35; }
+.conveyor-markings { stroke: #ffb8df; stroke-width: 24; stroke-dasharray: 3 9; animation: belt-flow .65s linear infinite; }
 .moving-package { transition: transform .1s linear, opacity .16s; filter: drop-shadow(0 3px 1px #30475445); }
 .moving-package.is-loading { opacity: .16; }
 .moving-package.is-fogged { opacity: .55; filter: blur(.35px) saturate(.72) drop-shadow(0 3px 1px #30475430); }
 .moving-package rect { fill: var(--package-color); stroke: var(--package-dark); stroke-width: 3; }
 .moving-package path { fill: none; stroke: #ffffffa0; stroke-width: 4; }
-.moving-package text { fill: #fff; font-size: 8px; font-weight: 900; text-anchor: middle; filter: drop-shadow(0 1px #0005); }
+.moving-package text { fill: #fff; font-size: 10px; font-weight: 900; text-anchor: middle; filter: drop-shadow(0 1px #0005); }
 .moving-package--red { --package-color: var(--red); --package-dark: var(--red-dark); }
 .moving-package--blue { --package-color: var(--blue); --package-dark: var(--blue-dark); }
 .moving-package--green { --package-color: var(--green); --package-dark: var(--green-dark); }
@@ -97,14 +97,14 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; }
 }
 .conveyor--fog-cleared .conveyor-fog { opacity: 0; }
 .conveyor--fog-cleared .moving-package.is-fogged { opacity: 1; filter: drop-shadow(0 3px 1px #30475445); }
-.fog-bonus {
+.speed-toggle {
   position: absolute; z-index: 4; top: 7px; right: 8px; display: grid; min-width: 48px;
   padding: 5px 8px; border: 2px solid #1766ae; border-radius: 12px;
   background: linear-gradient(#9eeeff, #3ba9ed); box-shadow: inset 0 2px 0 #fff9, 0 3px 0 #15578e;
   color: #fff; font-size: 7px; font-weight: 900; line-height: 1; text-transform: uppercase;
 }
-.fog-bonus span { margin-bottom: 3px; font-size: 9px; }
-.fog-bonus:disabled { background: linear-gradient(#c9fff4, #5edbb9); border-color: #24896d; box-shadow: inset 0 2px 0 #fff9, 0 3px 0 #1a7158; opacity: 1; }
+.speed-toggle span { margin-bottom: 3px; font-size: 14px; letter-spacing: -4px; transform: translateX(-2px); }
+.speed-toggle.is-active { background: linear-gradient(#fff782, #ffb81e); border-color: #ad6500; box-shadow: inset 0 2px 0 #fff9, 0 3px 0 #8d5100; }
 .is-tutorial-target {
   z-index: 8;
   outline: 3px solid #fff7a8;
@@ -145,24 +145,24 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; }
 .queue-more, .queue-empty { color: #8293a2; font-size: 10px; font-weight: 900; white-space: nowrap; }
 .queue-empty { margin: auto; color: var(--green-dark); }
 
-.parking-section { margin-top: 10px; }
+.parking-section { margin-top: 7px; }
 .parking {
-  position: relative; display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; padding: 8px;
+  position: relative; display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; padding: 6px;
   border: 2px solid #aa726a; border-radius: 16px;
   background: linear-gradient(#c99a90, #b9837b);
   box-shadow: inset 0 3px 0 #e2bab2, 0 4px 0 #88554f, 0 7px 12px #713e3e2a;
 }
 .parking-slot {
-  position: relative; display: grid; height: clamp(58px, 15vw, 76px); place-items: center;
+  position: relative; display: grid; height: clamp(38px, 10vw, 49px); padding: 0; place-items: center;
   border: 2px solid #9e6e68; border-radius: 11px; background: #a97b74;
   box-shadow: inset 0 3px 8px #70423f66, 0 1px 0 #e6bbb2;
 }
 .parking-slot--locked { border-style: solid; background: repeating-linear-gradient(135deg, #d1dce1 0 6px, #c5d2d8 6px 12px); color: #71838c; }
-.parking-slot--locked span { font-size: 20px; line-height: 1; }
+.parking-slot--locked span { color: #ffd52e; font-size: 15px; line-height: 1; text-shadow: 0 1px #805315; }
 .parking-slot--locked b { font-size: 6px; letter-spacing: .12em; }
 .slot-number { position: absolute; top: 3px; left: 6px; color: #a6b7c0; font-size: 8px; font-weight: 900; }
 .parked-truck {
-  display: grid; width: 58%; height: 70%; place-items: center; border: 2px solid var(--package-dark);
+  display: grid; width: 58%; height: 76%; place-items: center; border: 2px solid var(--package-dark);
   position: relative; overflow: hidden; border-width: 3px; border-radius: 10px;
   background:
     repeating-linear-gradient(135deg, transparent 0 3px, #fff3 3px 5px, #0001 5px 7px),
@@ -202,7 +202,7 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; }
 .package-flight::after { inset-inline: 0; top: 8px; height: 3px; }
 
 .board-wrap {
-  position: relative; width: min(88vw, 42vh, 400px); aspect-ratio: 1; margin: 15px auto 0;
+  position: relative; width: min(88vw, 34vh, 360px); aspect-ratio: 1; margin: 9px auto 0;
   padding: 4px;
 }
 .game-board {
@@ -277,6 +277,20 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; }
 .controls button span { font-size: 17px; }
 .controls button:active:not(:disabled) { transform: translateY(2px); box-shadow: 0 1px 0 #b5c9d3; }
 .controls button:disabled { opacity: .42; }
+.bonus-bar {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; margin-top: 9px;
+}
+.bonus-bar button {
+  position: relative; display: grid; min-width: 0; height: 48px; padding: 3px; place-items: center;
+  border: 2px solid #dda000; border-radius: 13px; background: linear-gradient(#fff9d7, #ffd85c);
+  box-shadow: inset 0 2px #fff, 0 3px #9f6900; color: #744721; opacity: 1;
+}
+.bonus-bar i { font-style: normal; font-size: 19px; font-weight: 1000; line-height: 1; }
+.bonus-bar span { overflow: hidden; max-width: 100%; font-size: 6px; font-weight: 900; text-overflow: ellipsis; text-transform: uppercase; }
+.bonus-bar b {
+  position: absolute; top: -7px; right: -4px; padding: 2px 4px; border: 1px solid #fff;
+  border-radius: 7px; background: #37bd4e; color: #fff; font-size: 6px;
+}
 
 .modal-backdrop {
   position: absolute; z-index: 20; inset: 0; display: grid; place-items: center; padding: 24px;

@@ -1,11 +1,11 @@
-export type TutorialStep = "red" | "driving" | "loading" | "blue" | "fog";
+export type TutorialStep = "red" | "driving" | "loading" | "blue" | "speed";
 
 const copy: Record<TutorialStep, readonly [string, string]> = {
   red: ["FIRST DELIVERY", "Tap the glowing red truck. It can leave in the arrow direction."],
   driving: ["ON THE WAY", "The truck drives around the yard and enters parking from below."],
   loading: ["MATCH THE COLORS", "Available parcels fly into matching parked trucks automatically."],
   blue: ["YOUR TURN", "Now send the glowing blue truck to parking."],
-  fog: ["FOGGY ROAD", "Tap Clear Fog. For 5 seconds, parcels inside the fog can be loaded."]
+  speed: ["SPEED BOOST", "Tap ×2 to make the conveyor move twice as fast."]
 } as const;
 
 export function TutorialHint({ step }: { step: TutorialStep }) {

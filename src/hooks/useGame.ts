@@ -46,16 +46,16 @@ export function useGame() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [movingTrucks, setMovingTrucks] = useState<MovingTruck[]>([]);
   const [packageTransfers, setPackageTransfers] = useState<PackageTransfer[]>([]);
-  const [fogCleared, setFogCleared] = useState(false);
+  const [speedBoosted, setSpeedBoosted] = useState(false);
   const telegram = useTelegram();
-  const visiblePackageCount = getVisiblePackageCount(state.packages, state.conveyorProgress, fogCleared);
+  const visiblePackageCount = getVisiblePackageCount(state.packages, state.conveyorProgress);
   const tutorialStep: TutorialStep | null = level.tutorial
     ? state.trucks.some((truck) => truck.id === "tutorial-red")
       ? movingTrucks.some((truck) => truck.id === "tutorial-red") ? "driving" : "red"
       : state.parking.some((truck) => truck.truckId === "tutorial-red") ? "loading"
       : state.trucks.some((truck) => truck.id === "tutorial-blue")
         ? movingTrucks.some((truck) => truck.id === "tutorial-blue") ? "driving" : "blue"
-        : state.packages.length && !fogCleared ? "fog" : "loading"
+        : state.packages.length && !speedBoosted ? "speed" : "loading"
     : null;
 
   const flash = useCallback((next: Feedback) => {
@@ -151,7 +151,7 @@ export function useGame() {
       setState((current) => {
         if (current.status !== "playing" || current.packages.length === 0) return current;
         const fastFinish = current.trucks.length === 0 && movingTrucks.length === 0;
-        const conveyorSpeed = fastFinish ? 12 : 3.4;
+        const conveyorSpeed = (fastFinish ? 12 : 3.4) * (speedBoosted ? 2 : 1);
         const conveyorProgress = Math.min(
           1,
           current.conveyorProgress + (0.1 / level.conveyorSeconds) * conveyorSpeed
@@ -161,7 +161,7 @@ export function useGame() {
       });
     }, 100);
     return () => window.clearInterval(interval);
-  }, [level.conveyorSeconds, level.parkingSize, movingTrucks.length]);
+  }, [level.conveyorSeconds, level.parkingSize, movingTrucks.length, speedBoosted]);
 
   useEffect(() => {
     if (state.status === "lost") {
@@ -183,7 +183,7 @@ export function useGame() {
     setIsProcessing(false);
     setMovingTrucks([]);
     setPackageTransfers([]);
-    setFogCleared(false);
+    setSpeedBoosted(false);
   }, [level]);
 
   const openLevel = useCallback((index: number) => {
@@ -191,12 +191,11 @@ export function useGame() {
     setLevelIndex(safeIndex);
   }, []);
 
-  const clearFog = useCallback(() => {
-    if (fogCleared || state.status !== "playing") return;
-    setFogCleared(true);
+  const toggleSpeed = useCallback(() => {
+    if (state.status !== "playing") return;
+    setSpeedBoosted((value) => !value);
     telegram.impact();
-    window.setTimeout(() => setFogCleared(false), 5000);
-  }, [fogCleared, state.status, telegram]);
+  }, [state.status, telegram]);
 
   useEffect(() => {
     setState(createInitialState(level));
@@ -204,7 +203,7 @@ export function useGame() {
     setIsProcessing(false);
     setMovingTrucks([]);
     setPackageTransfers([]);
-    setFogCleared(false);
+    setSpeedBoosted(false);
   }, [level]);
 
   return {
@@ -218,8 +217,8 @@ export function useGame() {
     fastFinish: state.trucks.length === 0 && movingTrucks.length === 0,
     tutorialTargetTruckId: level.tutorial ? state.trucks[0]?.id : undefined,
     tutorialStep,
-    fogCleared,
-    clearFog,
+    speedBoosted,
+    toggleSpeed,
     selectTruck, restart,
     nextLevel: () => openLevel(levelIndex + 1),
     previousLevel: () => openLevel(levelIndex - 1),
