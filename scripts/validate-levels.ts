@@ -64,7 +64,7 @@ const visibilityCheck = processPackageWave(
     { id: "visible-red", color: "red" },
     { id: "hidden-blue", color: "blue" }
   ],
-  [{ truckId: "blue-truck", color: "blue", capacity: 3, loaded: 0 }],
+  [{ truckId: "blue-truck", slotIndex: 0, color: "blue", capacity: 3, loaded: 0 }],
   1
 );
 if (visibilityCheck.loaded !== 0 || visibilityCheck.packages.length !== 2) {

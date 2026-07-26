@@ -14,6 +14,7 @@ import { getGameStatus } from "../game/winLoseConditions";
 import { useTelegram } from "./useTelegram";
 
 type Feedback = { kind: "truck" | "parking"; id: string } | null;
+type MovingTruck = { id: string; slotIndex: number };
 const storageKey = "parcel-jam-progress";
 
 function readUnlockedLevel(): number {
@@ -41,7 +42,7 @@ export function useGame() {
   const [state, setState] = useState(() => createInitialState(level));
   const [feedback, setFeedback] = useState<Feedback>(null);
   const [isProcessing, setIsProcessing] = useState(false);
-  const [movingTruckIds, setMovingTruckIds] = useState<string[]>([]);
+  const [movingTrucks, setMovingTrucks] = useState<MovingTruck[]>([]);
   const [packageTransfers, setPackageTransfers] = useState<PackageTransfer[]>([]);
   const telegram = useTelegram();
   const visiblePackageCount = getVisiblePackageCount(state.packages, state.conveyorProgress);
@@ -52,21 +53,27 @@ export function useGame() {
   }, []);
 
   const selectTruck = useCallback((truckId: string) => {
-    if (state.status !== "playing" || packageTransfers.length) return null;
+    if (state.status !== "playing") return null;
     const truck = state.trucks.find((item) => item.id === truckId);
-    if (!truck || movingTruckIds.includes(truckId)) return null;
+    if (!truck || movingTrucks.some((item) => item.id === truckId)) return null;
     if (!canTruckExit(truck, state.trucks, level.rows, level.cols)) {
       flash({ kind: "truck", id: truckId });
       telegram.error();
       return null;
     }
-    if (state.parking.length + movingTruckIds.length >= level.parkingSize) {
+    if (state.parking.length + movingTrucks.length >= level.parkingSize) {
       flash({ kind: "parking", id: "parking" });
       telegram.error();
       return null;
     }
-    const slotIndex = state.parking.length + movingTruckIds.length;
-    setMovingTruckIds((items) => [...items, truck.id]);
+    const occupiedSlots = new Set([
+      ...state.parking.map((item) => item.slotIndex),
+      ...movingTrucks.map((item) => item.slotIndex)
+    ]);
+    const slotIndex = Array.from({ length: level.parkingSize }, (_, index) => index)
+      .find((index) => !occupiedSlots.has(index));
+    if (slotIndex === undefined) return null;
+    setMovingTrucks((items) => [...items, { id: truck.id, slotIndex }]);
     telegram.impact();
     window.setTimeout(() => {
       setState((current) => {
@@ -75,16 +82,16 @@ export function useGame() {
         return {
           ...current,
           trucks: removeTruckFromField(current.trucks, currentTruck.id),
-          parking: addTruckToParking(current.parking, currentTruck)
+          parking: addTruckToParking(current.parking, currentTruck, slotIndex)
         };
       });
-      setMovingTruckIds((items) => items.filter((id) => id !== truck.id));
-    }, 620);
-    return { slotIndex };
-  }, [flash, level, movingTruckIds, packageTransfers.length, state, telegram]);
+      setMovingTrucks((items) => items.filter((item) => item.id !== truck.id));
+    }, 1180);
+    return { slotIndex, direction: truck.direction };
+  }, [flash, level, movingTrucks, state, telegram]);
 
   useEffect(() => {
-    if (packageTransfers.length || movingTruckIds.length) return;
+    if (packageTransfers.length) return;
     if (
       state.status !== "playing" ||
       !canProcessNextPackage(state.packages, state.parking, visiblePackageCount)
@@ -97,7 +104,6 @@ export function useGame() {
     setPackageTransfers(wave.transfers);
   }, [
     level.parkingSize,
-    movingTruckIds.length,
     packageTransfers.length,
     state.packages,
     state.parking,
@@ -139,7 +145,7 @@ export function useGame() {
     if (state.status === "lost") {
       setIsProcessing(false);
       setPackageTransfers([]);
-      setMovingTruckIds([]);
+      setMovingTrucks([]);
       telegram.error();
     }
     if (state.status === "won") {
@@ -153,7 +159,7 @@ export function useGame() {
     setState(createInitialState(level));
     setFeedback(null);
     setIsProcessing(false);
-    setMovingTruckIds([]);
+    setMovingTrucks([]);
     setPackageTransfers([]);
   }, [level]);
 
@@ -166,12 +172,18 @@ export function useGame() {
     setState(createInitialState(level));
     setFeedback(null);
     setIsProcessing(false);
-    setMovingTruckIds([]);
+    setMovingTrucks([]);
     setPackageTransfers([]);
   }, [level]);
 
   return {
-    level, levelIndex, state, feedback, isProcessing, movingTruckIds, packageTransfers,
+    level,
+    levelIndex,
+    state,
+    feedback,
+    isProcessing,
+    movingTruckIds: movingTrucks.map((item) => item.id),
+    packageTransfers,
     selectTruck, restart,
     nextLevel: () => openLevel(levelIndex + 1),
     previousLevel: () => openLevel(levelIndex - 1),

@@ -26,6 +26,7 @@ export type PackageItem = {
 
 export type ParkingTruck = {
   truckId: string;
+  slotIndex: number;
   color: TruckColor;
   capacity: number;
   loaded: number;
