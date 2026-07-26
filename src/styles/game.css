@@ -300,7 +300,7 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; }
   }
   47% {
     opacity: 1;
-    transform: translate(var(--corner-x, -120px), var(--corner-y, -120px)) rotate(-90deg);
+    transform: translate(var(--corner-x, -120px), var(--corner-y, -120px)) rotate(var(--corner-angle, -90deg));
   }
   68% {
     opacity: 1;
@@ -308,11 +308,11 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; }
   }
   86% {
     opacity: 1;
-    transform: translate(var(--approach-x, 0), var(--approach-y, -100px)) rotate(-90deg) scale(.86);
+    transform: translate(var(--approach-x, 0), var(--approach-y, -100px)) rotate(var(--approach-angle, -90deg)) scale(.86);
   }
   100% {
     opacity: .72;
-    transform: translate(var(--travel-x, 0), var(--travel-y, -160px)) rotate(-90deg) scale(.78);
+    transform: translate(var(--travel-x, 0), var(--travel-y, -160px)) rotate(var(--approach-angle, -90deg)) scale(.78);
   }
 }
 @keyframes blocked-drive {
