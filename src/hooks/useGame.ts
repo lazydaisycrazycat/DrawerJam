@@ -151,7 +151,7 @@ export function useGame() {
       setState((current) => {
         if (current.status !== "playing" || current.packages.length === 0) return current;
         const fastFinish = current.trucks.length === 0 && movingTrucks.length === 0;
-        const conveyorSpeed = fastFinish ? 10 : 2.3;
+        const conveyorSpeed = fastFinish ? 12 : 3.4;
         const conveyorProgress = Math.min(
           1,
           current.conveyorProgress + (0.1 / level.conveyorSeconds) * conveyorSpeed
