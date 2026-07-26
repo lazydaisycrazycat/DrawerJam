@@ -38,7 +38,10 @@ export function Truck({ truck, blocked, moving, onClick }: FieldProps) {
 
 export function ParkedTruck({ truck }: { truck: ParkingTruck }) {
   return (
-    <div className={`parked-truck truck--${truck.color}`} data-parking-truck-id={truck.truckId}>
+    <div
+      className={`parked-truck parked-truck--${truck.capacity} truck--${truck.color}`}
+      data-parking-truck-id={truck.truckId}
+    >
       <span>{colorSymbols[truck.color]}</span>
       <div
         className={`load-dots load-dots--${truck.capacity}`}
