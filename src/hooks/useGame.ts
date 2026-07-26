@@ -45,7 +45,7 @@ export function useGame() {
   }, []);
 
   const selectTruck = useCallback((truckId: string) => {
-    if (state.status !== "playing" || isProcessing) return;
+    if (state.status !== "playing") return;
     const truck = state.trucks.find((item) => item.id === truckId);
     if (!truck) return;
     if (!canTruckExit(truck, state.trucks, level.rows, level.cols)) {
@@ -62,33 +62,27 @@ export function useGame() {
     const trucks = removeTruckFromField(state.trucks, truck.id);
     const addedParking = addTruckToParking(state.parking, truck);
     setState({ ...state, trucks, parking: addedParking, status: "playing" });
-    setIsProcessing(true);
+    if (canProcessNextPackage(state.packages, addedParking)) setIsProcessing(true);
     telegram.impact();
-  }, [flash, isProcessing, level, state, telegram]);
+  }, [flash, level, state, telegram]);
 
   useEffect(() => {
-    if (!isProcessing) return;
+    if (state.status !== "playing" || !canProcessNextPackage(state.packages, state.parking)) {
+      setIsProcessing(false);
+      return;
+    }
+    setIsProcessing(true);
     const timer = window.setTimeout(() => {
-      if (canProcessNextPackage(state.packages, state.parking)) {
-        const next = processNextPackage(state.packages, state.parking);
-        const conveyorProgress = Math.max(0.12, state.conveyorProgress - packageSpacing);
+      setState((current) => {
+        if (current.status !== "playing" || !canProcessNextPackage(current.packages, current.parking)) return current;
+        const next = processNextPackage(current.packages, current.parking);
+        const conveyorProgress = Math.max(0.12, current.conveyorProgress - packageSpacing);
         const status = getGameStatus(next.packages, next.parking, level.parkingSize, conveyorProgress);
-        setState((current) => current.status === "lost" ? current : {
-          ...current, packages: next.packages, parking: next.parking, conveyorProgress, status
-        });
-        if (status === "won") {
-          telegram.success();
-          saveUnlockedLevel(Math.min(level.id + 1, levels.length));
-          setIsProcessing(false);
-        }
-      } else {
-        const status = getGameStatus(state.packages, state.parking, level.parkingSize, state.conveyorProgress);
-        setState((current) => ({ ...current, status }));
-        setIsProcessing(false);
-      }
-    }, 210);
+        return { ...current, packages: next.packages, parking: next.parking, conveyorProgress, status };
+      });
+    }, 180);
     return () => window.clearTimeout(timer);
-  }, [isProcessing, level.id, level.parkingSize, state.conveyorProgress, state.packages, state.parking, telegram]);
+  }, [level.parkingSize, state.packages, state.parking, state.status]);
 
   useEffect(() => {
     const interval = window.setInterval(() => {
@@ -107,7 +101,12 @@ export function useGame() {
       setIsProcessing(false);
       telegram.error();
     }
-  }, [state.status, telegram]);
+    if (state.status === "won") {
+      setIsProcessing(false);
+      telegram.success();
+      saveUnlockedLevel(Math.min(level.id + 1, levels.length));
+    }
+  }, [level.id, state.status, telegram]);
 
   const restart = useCallback(() => {
     setState(createInitialState(level));
