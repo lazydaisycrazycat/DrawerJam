@@ -5,9 +5,7 @@ const truck = (id: string, row: number, col: number, color: TruckColor, directio
 });
 
 const packages = (sequence: TruckColor[]): PackageItem[] =>
-  sequence.flatMap((color, group) =>
-    Array.from({ length: 3 }, (_, item) => ({ id: `${color}-${group}-${item}`, color }))
-  );
+  sequence.map((color, index) => ({ id: `package-${index}-${color}`, color }));
 
 export const levels: LevelConfig[] = [
   {
@@ -17,7 +15,7 @@ export const levels: LevelConfig[] = [
       truck("red-1", 4, 1, "red", "down"),
       truck("blue-1", 0, 3, "blue", "up")
     ],
-    packages: packages(["red", "blue"])
+    packages: packages(["red", "red", "blue", "red", "blue", "blue"])
   },
   {
     id: 2, rows: 5, cols: 5, parkingSize: 3, truckCapacity: 3, conveyorSeconds: 45,
@@ -30,7 +28,7 @@ export const levels: LevelConfig[] = [
       truck("decoy-2b", 0, 4, "red", "down"),
       truck("decoy-2c", 3, 1, "yellow", "up")
     ],
-    packages: packages(["green", "red", "blue"])
+    packages: packages(["green", "green", "red", "green", "blue", "blue", "blue", "red", "red"])
   },
   {
     id: 3, rows: 5, cols: 5, parkingSize: 3, truckCapacity: 3, conveyorSeconds: 42,
@@ -44,7 +42,7 @@ export const levels: LevelConfig[] = [
       truck("decoy-3b", 2, 1, "green", "down"),
       truck("decoy-3c", 1, 3, "red", "down")
     ],
-    packages: packages(["yellow", "green", "red", "blue"])
+    packages: packages(["yellow", "green", "green", "red", "yellow", "blue", "blue", "blue", "green", "red", "red", "yellow"])
   },
   {
     id: 4, rows: 6, cols: 6, parkingSize: 4, truckCapacity: 3, conveyorSeconds: 38,
@@ -60,7 +58,7 @@ export const levels: LevelConfig[] = [
       truck("decoy-4c", 5, 5, "green", "left"),
       truck("decoy-4d", 0, 0, "red", "right")
     ],
-    packages: packages(["blue", "red", "yellow", "green"])
+    packages: packages(["blue", "blue", "red", "yellow", "yellow", "green", "blue", "red", "red", "green", "green", "yellow"])
   },
   {
     id: 5, rows: 6, cols: 6, parkingSize: 4, truckCapacity: 3, conveyorSeconds: 34,
@@ -77,6 +75,6 @@ export const levels: LevelConfig[] = [
       truck("decoy-5c", 1, 1, "blue", "down"),
       truck("decoy-5d", 0, 0, "yellow", "right")
     ],
-    packages: packages(["green", "yellow", "red", "blue"])
+    packages: packages(["green", "yellow", "yellow", "red", "green", "blue", "red", "blue", "blue", "yellow", "green", "red"])
   }
 ];

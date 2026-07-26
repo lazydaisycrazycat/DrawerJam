@@ -22,7 +22,7 @@ export default function App() {
       <p className={`hint${game.isProcessing ? " is-loading" : ""}`}>
         {game.isProcessing ? "Loading matching packages…" : "Tap a truck with a clear path to its arrow"}
       </p>
-      <Controls canUndo={game.canUndo} onUndo={game.undo} onRestart={game.restart} />
+      <Controls onRestart={game.restart} />
       {game.state.status !== "playing" && (
         <ResultModal
           status={game.state.status}

@@ -12,7 +12,7 @@ export function ResultModal({ status, hasNext, dangerLoss, onRestart, onNext }: 
           ? "Every package found the right truck."
           : dangerLoss
             ? "A package reached the jam point. Keep the conveyor moving!"
-            : "No parked truck matches the next package."}</span>
+            : "No parked truck matches any package on the conveyor."}</span>
         {status === "won" && hasNext ? <button onClick={onNext}>Next level <b>→</b></button> : <button onClick={onRestart}>Try again <b>↻</b></button>}
       </div>
     </div>
