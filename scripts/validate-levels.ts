@@ -56,3 +56,27 @@ if (visibilityCheck.loaded !== 0 || visibilityCheck.packages.length !== 2) {
   throw new Error("A truck loaded a package that was not visible on the conveyor");
 }
 console.log("Visibility rule: hidden packages cannot be loaded");
+
+const diagonalTruck = {
+  id: "diagonal",
+  row: 2,
+  col: 2,
+  color: "red" as const,
+  direction: "up-right" as const,
+  capacity: 3
+};
+const cornerBlocker = {
+  id: "corner-blocker",
+  row: 1,
+  col: 2,
+  color: "blue" as const,
+  direction: "up" as const,
+  capacity: 3
+};
+if (canTruckExit(diagonalTruck, [diagonalTruck, cornerBlocker], 5, 5)) {
+  throw new Error("A diagonal truck passed through an occupied corner");
+}
+if (!canTruckExit(diagonalTruck, [diagonalTruck], 5, 5)) {
+  throw new Error("A diagonal truck with a clear corridor was blocked");
+}
+console.log("Diagonal rule: trucks cannot pass through occupied corners");
