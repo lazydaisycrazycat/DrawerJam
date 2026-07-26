@@ -72,7 +72,8 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; }
 .conveyor-shadow { stroke: #6f3c58; stroke-width: 30; filter: drop-shadow(0 5px 2px #64324655); }
 .conveyor-belt { stroke: #d64f91; stroke-width: 24; }
 .conveyor-markings { stroke: #ffb8df; stroke-width: 16; stroke-dasharray: 2 7; animation: belt-flow .8s linear infinite; }
-.moving-package { transition: transform .1s linear; filter: drop-shadow(0 3px 1px #30475445); }
+.moving-package { transition: transform .1s linear, opacity .16s; filter: drop-shadow(0 3px 1px #30475445); }
+.moving-package.is-loading { opacity: .16; }
 .moving-package rect { fill: var(--package-color); stroke: var(--package-dark); stroke-width: 3; }
 .moving-package path { fill: none; stroke: #ffffffa0; stroke-width: 4; }
 .moving-package text { fill: #fff; font-size: 8px; font-weight: 900; text-anchor: middle; filter: drop-shadow(0 1px #0005); }
@@ -117,7 +118,7 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; }
 
 .parking-section { margin-top: 10px; }
 .parking {
-  display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; padding: 8px;
+  position: relative; display: grid; grid-template-columns: repeat(4, 1fr); gap: 7px; padding: 8px;
   border: 2px solid #aa726a; border-radius: 16px;
   background: linear-gradient(#c99a90, #b9837b);
   box-shadow: inset 0 3px 0 #e2bab2, 0 4px 0 #88554f, 0 7px 12px #713e3e2a;
@@ -138,12 +139,22 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; }
     repeating-linear-gradient(135deg, transparent 0 3px, #fff3 3px 5px, #0001 5px 7px),
     var(--package-color);
   color: #fff; box-shadow: inset 0 3px 0 #fff7, 0 4px 0 var(--package-dark), 0 6px 7px #51222f44;
-  animation: park-in .28s cubic-bezier(.2,.9,.3,1.3);
+  animation: park-in .43s cubic-bezier(.12,.75,.2,1.18);
 }
 .parked-truck > span { font-size: 12px; line-height: 1; }
 .load-dots { display: flex; gap: 3px; }
 .load-dots i { width: 7px; height: 7px; border: 1px solid #fff; border-radius: 2px; background: #0002; }
 .load-dots i.filled { background: #fff; animation: load-pop .22s ease-out; }
+.package-flight {
+  position: absolute; z-index: 8; top: 50%; left: calc((var(--flight-slot) + .5) * 25%);
+  width: 24px; height: 24px; pointer-events: none;
+  border: 3px solid var(--package-dark); border-radius: 6px; background: var(--package-color);
+  box-shadow: inset 0 3px 0 #fff7, 0 4px 0 var(--package-dark), 0 7px 10px #642f3f55;
+  animation: package-flight .68s cubic-bezier(.22,.7,.18,1) forwards;
+}
+.package-flight::before, .package-flight::after { content: ""; position: absolute; background: #ffffff88; }
+.package-flight::before { inset-block: 0; left: 8px; width: 3px; }
+.package-flight::after { inset-inline: 0; top: 8px; height: 3px; }
 
 .board-wrap {
   position: relative; width: min(88vw, 42vh, 400px); aspect-ratio: 1; margin: 15px auto 0;
@@ -187,23 +198,24 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; }
 }
 .truck__wheel { position: absolute; width: 12%; aspect-ratio: 1; border: 2px solid #22303d; border-radius: 50%; background: #788690; }
 .truck__wheel--one { left: 18%; bottom: -8%; } .truck__wheel--two { right: 17%; bottom: -8%; }
-.truck--right { transform: rotate(0deg); }
-.truck--down-right { transform: rotate(45deg); }
-.truck--down { transform: rotate(90deg); }
-.truck--down-left { transform: rotate(135deg); }
-.truck--left { transform: rotate(180deg); }
-.truck--up-left { transform: rotate(-135deg); }
-.truck--up { transform: rotate(-90deg); }
-.truck--up-right { transform: rotate(-45deg); }
-.truck--right:active { transform: rotate(0deg) scale(.92); }
-.truck--down-right:active { transform: rotate(45deg) scale(.92); }
-.truck--down:active { transform: rotate(90deg) scale(.92); }
-.truck--down-left:active { transform: rotate(135deg) scale(.92); }
-.truck--left:active { transform: rotate(180deg) scale(.92); }
-.truck--up-left:active { transform: rotate(-135deg) scale(.92); }
-.truck--up:active { transform: rotate(-90deg) scale(.92); }
-.truck--up-right:active { transform: rotate(-45deg) scale(.92); }
-.truck.is-blocked { animation: shake .24s ease-in-out; filter: saturate(.5) brightness(.85); outline: 3px solid #ef3f53; }
+.truck--right { --truck-angle: 0deg; }
+.truck--down-right { --truck-angle: 45deg; }
+.truck--down { --truck-angle: 90deg; }
+.truck--down-left { --truck-angle: 135deg; }
+.truck--left { --truck-angle: 180deg; }
+.truck--up-left { --truck-angle: -135deg; }
+.truck--up { --truck-angle: -90deg; }
+.truck--up-right { --truck-angle: -45deg; }
+.truck { transform: rotate(var(--truck-angle)); }
+.truck:active { transform: rotate(var(--truck-angle)) scale(.92); }
+.truck.is-exiting {
+  z-index: 10; pointer-events: none;
+  animation: truck-exit .43s cubic-bezier(.2,.65,.3,1) forwards;
+}
+.truck.is-blocked {
+  z-index: 9; animation: blocked-drive .5s cubic-bezier(.3,.05,.2,1);
+  filter: saturate(.65) brightness(.92); outline: 3px solid #ef3f53;
+}
 .parking-section.is-shaking { animation: shake .24s ease-in-out; }
 .hint { margin: 12px 0 8px; color: #708596; font-size: 10px; font-weight: 800; text-align: center; }
 .hint.is-loading::after { content: ""; display: inline-block; width: 5px; height: 5px; margin-left: 6px; border-radius: 50%; background: var(--yellow-dark); animation: loading-dot .6s ease-in-out infinite alternate; }
@@ -254,7 +266,7 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; }
 .confetti i:nth-child(13) { left: 89%; } .confetti i:nth-child(14) { left: 95%; }
 
 @keyframes shake { 25% { transform: translateX(-5px); } 50% { transform: translateX(5px); } 75% { transform: translateX(-3px); } }
-@keyframes park-in { from { opacity: 0; transform: translateY(22px) scale(.7); } }
+@keyframes park-in { from { opacity: 0; transform: translateY(145px) scale(.72); } }
 @keyframes truck-arrive { from { opacity: 0; transform: scale(.65); } }
 @keyframes package-in { from { opacity: 0; transform: translateX(10px); } }
 @keyframes load-pop { 50% { transform: scale(1.5); } }
@@ -262,6 +274,22 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; }
 @keyframes belt-flow { to { stroke-dashoffset: -22; } }
 @keyframes first-package { to { filter: drop-shadow(0 0 7px #ef5b5b); } }
 @keyframes danger-pulse { to { box-shadow: inset 0 0 20px #ef5b5b2e, 0 0 0 2px #ef5b5b55; } }
+@keyframes package-flight {
+  0% { opacity: 0; transform: translate(-50%, -165px) scale(.72) rotate(-12deg); }
+  18% { opacity: 1; }
+  75% { transform: translate(-50%, -20px) scale(1.08) rotate(8deg); }
+  100% { opacity: 0; transform: translate(-50%, 0) scale(.55) rotate(0); }
+}
+@keyframes truck-exit {
+  0% { opacity: 1; transform: rotate(var(--truck-angle)) translateX(0); }
+  72% { opacity: 1; transform: rotate(var(--truck-angle)) translateX(92px); }
+  100% { opacity: 0; transform: rotate(var(--truck-angle)) translateX(145px) scale(.82); }
+}
+@keyframes blocked-drive {
+  0%, 100% { transform: rotate(var(--truck-angle)) translateX(0); }
+  46% { transform: rotate(var(--truck-angle)) translateX(34px); }
+  58% { transform: rotate(var(--truck-angle)) translateX(30px); filter: brightness(.75); }
+}
 @keyframes fade-in { from { opacity: 0; } }
 @keyframes modal-pop { from { opacity: 0; transform: translateY(25px) scale(.85); } }
 @keyframes confetti { to { transform: translate(20px, 110vh) rotate(540deg); } }

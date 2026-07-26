@@ -11,11 +11,22 @@ export default function App() {
   return (
     <main className="app-shell">
       <GameHeader level={game.level.id} onPrevious={game.previousLevel} />
-      <PackageQueue packages={game.state.packages} level={game.level} progress={game.state.conveyorProgress} />
-      <Parking trucks={game.state.parking} size={game.level.parkingSize} fullFeedback={game.feedback?.kind === "parking"} />
+      <PackageQueue
+        packages={game.state.packages}
+        level={game.level}
+        progress={game.state.conveyorProgress}
+        transfers={game.packageTransfers}
+      />
+      <Parking
+        trucks={game.state.parking}
+        size={game.level.parkingSize}
+        fullFeedback={game.feedback?.kind === "parking"}
+        transfers={game.packageTransfers}
+      />
       <GameBoard
         level={game.level}
         trucks={game.state.trucks}
+        movingTruckIds={game.movingTruckIds}
         blockedTruckId={game.feedback?.kind === "truck" ? game.feedback.id : undefined}
         onTruckClick={game.selectTruck}
       />

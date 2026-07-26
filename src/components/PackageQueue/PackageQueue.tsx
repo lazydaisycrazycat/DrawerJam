@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { CONVEYOR_PACKAGE_SPACING } from "../../game/packageProcessing";
+import type { PackageTransfer } from "../../game/packageProcessing";
 import type { LevelConfig, PackageItem } from "../../game/types";
 import { colorSymbols } from "../Truck/Truck";
 
@@ -26,10 +27,11 @@ function pointOnRoute(points: Point[], progress: number): Point {
   return points.at(-1) ?? { x: 0, y: 0 };
 }
 
-export function PackageQueue({ packages, level, progress }: {
+export function PackageQueue({ packages, level, progress, transfers }: {
   packages: PackageItem[];
   level: LevelConfig;
   progress: number;
+  transfers: PackageTransfer[];
 }) {
   const route = level.conveyorPoints.map(({ x, y }) => `${x},${y}`).join(" ");
   const movingPackages = useMemo(() => packages.map((item, index) => ({
@@ -61,7 +63,7 @@ export function PackageQueue({ packages, level, progress }: {
           </g>
           {movingPackages.map(({ item, index, point, visible }) => visible && (
             <g
-              className={`moving-package moving-package--${item.color}${index === 0 ? " is-first" : ""}`}
+              className={`moving-package moving-package--${item.color}${index === 0 ? " is-first" : ""}${transfers.some((transfer) => transfer.packageId === item.id) ? " is-loading" : ""}`}
               key={item.id}
               transform={`translate(${point.x} ${point.y})`}
             >
