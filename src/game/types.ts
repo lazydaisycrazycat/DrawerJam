@@ -51,7 +51,10 @@ export type GameState = {
   parking: ParkingTruck[];
   packages: PackageItem[];
   conveyorProgress: number;
+  overloadHealth: number;
+  conveyorRewinds: number;
+  jamGrace: number;
   status: GameStatus;
 };
 
-export type GameSnapshot = Pick<GameState, "trucks" | "parking" | "packages" | "conveyorProgress" | "status">;
+export type GameSnapshot = Pick<GameState, "trucks" | "parking" | "packages" | "conveyorProgress" | "overloadHealth" | "conveyorRewinds" | "jamGrace" | "status">;
