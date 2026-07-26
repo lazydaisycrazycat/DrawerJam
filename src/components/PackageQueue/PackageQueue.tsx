@@ -27,16 +27,17 @@ function pointOnRoute(points: Point[], progress: number): Point {
   return points.at(-1) ?? { x: 0, y: 0 };
 }
 
-export function PackageQueue({ packages, level, progress, transfers, fogCleared, onClearFog, highlightFogBonus }: {
+export function PackageQueue({ packages, level, progress, transfers, speedBoosted, onToggleSpeed, highlightSpeedBonus }: {
   packages: PackageItem[];
   level: LevelConfig;
   progress: number;
   transfers: PackageTransfer[];
-  fogCleared: boolean;
-  onClearFog: () => void;
-  highlightFogBonus?: boolean;
+  speedBoosted: boolean;
+  onToggleSpeed: () => void;
+  highlightSpeedBonus?: boolean;
 }) {
   const route = level.conveyorPoints.map(({ x, y }) => `${x},${y}`).join(" ");
+  const jamPoint = level.conveyorPoints.at(-1) ?? { x: 342, y: 106 };
   const movingPackages = useMemo(() => packages.map((item, index) => ({
     item,
     index,
@@ -50,7 +51,7 @@ export function PackageQueue({ packages, level, progress, transfers, fogCleared,
         <h2>Incoming packages</h2>
         <span>{packages.length} left</span>
       </div>
-      <div className={`conveyor${progress > 0.82 ? " conveyor--danger" : ""}${fogCleared ? " conveyor--fog-cleared" : ""}`}>
+      <div className={`conveyor${progress > 0.82 ? " conveyor--danger" : ""}`}>
         <svg viewBox="0 0 360 210" role="img" aria-label="Moving package conveyor">
           <polyline className="conveyor-shadow" points={route} />
           <polyline className="conveyor-belt" points={route} />
@@ -59,10 +60,10 @@ export function PackageQueue({ packages, level, progress, transfers, fogCleared,
             <rect x="4" y="86" width="29" height="43" rx="7" />
             <path d="M10 86V76h17v10M11 99h15M11 108h15M11 117h15" />
           </g>
-          <g className="jam-zone">
-            <circle cx="343" cy="106" r="15" />
-            <path d="M343 96v13M343 116v1" />
-            <text x="343" y="137">JAM</text>
+          <g className="jam-zone" transform={`translate(${jamPoint.x} ${jamPoint.y})`}>
+            <circle cx="0" cy="0" r="15" />
+            <path d="M0 -10v13M0 10v1" />
+            <text x="0" y="31">JAM</text>
           </g>
           {movingPackages.map(({ item, index, point, visible }) => visible && (
             <g
@@ -71,16 +72,16 @@ export function PackageQueue({ packages, level, progress, transfers, fogCleared,
               key={item.id}
               transform={`translate(${point.x} ${point.y})`}
             >
-              <rect x="-11" y="-11" width="22" height="22" rx="5" />
-              <path d="M-11 -3H11M-3 -11V11" />
-              <text x="0" y="4">{colorSymbols[item.color]}</text>
+              <rect x="-14" y="-14" width="28" height="28" rx="6" />
+              <path d="M-14 -4H14M-4 -14V14" />
+              <text x="0" y="5">{colorSymbols[item.color]}</text>
             </g>
           ))}
           <polyline className="conveyor-fog" pathLength="1" points={route} />
         </svg>
-        <button className={`fog-bonus${highlightFogBonus ? " is-tutorial-target" : ""}`} onClick={onClearFog} disabled={fogCleared}>
-          <span>{fogCleared ? "5s" : "FOG"}</span>
-          {fogCleared ? "Open" : "Clear"}
+        <button className={`speed-toggle${speedBoosted ? " is-active" : ""}${highlightSpeedBonus ? " is-tutorial-target" : ""}`} onClick={onToggleSpeed}>
+          <span>»</span>
+          {speedBoosted ? "×2" : "×1"}
         </button>
         <div className="danger-meter">
           <span>SAFE</span>

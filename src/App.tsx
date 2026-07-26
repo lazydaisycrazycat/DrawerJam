@@ -6,6 +6,7 @@ import { Parking } from "./components/Parking/Parking";
 import { PackageTransferLayer } from "./components/PackageTransferLayer/PackageTransferLayer";
 import { ResultModal } from "./components/ResultModal/ResultModal";
 import { TutorialHint } from "./components/TutorialHint/TutorialHint";
+import { BonusBar } from "./components/BonusBar/BonusBar";
 import { useGame } from "./hooks/useGame";
 
 export default function App() {
@@ -117,9 +118,9 @@ export default function App() {
         level={game.level}
         progress={game.state.conveyorProgress}
         transfers={game.packageTransfers}
-        fogCleared={game.fogCleared}
-        onClearFog={game.clearFog}
-        highlightFogBonus={game.tutorialStep === "fog"}
+        speedBoosted={game.speedBoosted}
+        onToggleSpeed={game.toggleSpeed}
+        highlightSpeedBonus={game.tutorialStep === "speed"}
       />
       <Parking
         trucks={game.state.parking}
@@ -140,6 +141,7 @@ export default function App() {
         {game.isProcessing ? "Loading matching packages…" : "Tap a truck with a clear path to its arrow"}
       </p>
       <Controls onRestart={game.restart} />
+      <BonusBar />
       {game.state.status !== "playing" && (
         <ResultModal
           status={game.state.status}
