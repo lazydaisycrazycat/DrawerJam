@@ -123,7 +123,7 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; }
   box-shadow: inset 0 3px 0 #e2bab2, 0 4px 0 #88554f, 0 7px 12px #713e3e2a;
 }
 .parking-slot {
-  position: relative; display: grid; height: clamp(50px, 14vw, 66px); place-items: center;
+  position: relative; display: grid; height: clamp(58px, 15vw, 76px); place-items: center;
   border: 2px solid #9e6e68; border-radius: 11px; background: #a97b74;
   box-shadow: inset 0 3px 8px #70423f66, 0 1px 0 #e6bbb2;
 }
@@ -146,13 +146,13 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; }
 .load-dots i.filled { background: #fff; animation: load-pop .22s ease-out; }
 
 .board-wrap {
-  position: relative; width: min(63vw, 265px); aspect-ratio: 1; margin: 13px auto 0;
+  position: relative; width: min(88vw, 42vh, 400px); aspect-ratio: 1; margin: 15px auto 0;
   padding: 9px; border: 3px solid #e2aca4; border-radius: 24px;
   background: linear-gradient(#f7d7d0, #eabeb7);
   box-shadow: inset 0 3px 0 #fff, 0 6px 0 #bd7774, 0 12px 24px #7f3b462d;
 }
 .game-board {
-  position: relative; display: grid; width: 100%; height: 100%; gap: 3px; padding: 3px;
+  position: relative; display: grid; width: 100%; height: 100%; gap: 4px; padding: 4px;
   overflow: hidden; border-radius: 15px; background: #edcbc5;
 }
 .grid-cell {
@@ -167,7 +167,7 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; }
 .road--left { left: -18px; } .road--right { right: -18px; }
 
 .truck {
-  position: relative; z-index: 2; align-self: stretch; justify-self: stretch; margin: 3px; padding: 0;
+  position: relative; z-index: 2; align-self: stretch; justify-self: stretch; margin: 2px; padding: 0;
   overflow: visible; border: 3px solid var(--package-dark); border-radius: 11px;
   background:
     repeating-linear-gradient(135deg, transparent 0 3px, #ffffff3d 3px 5px, #00000012 5px 7px),
@@ -185,6 +185,10 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; }
 .truck--left:active, .truck--up:active, .truck--down:active { transform: scale(.91); }
 .truck--left .truck__arrow, .truck--up .truck__arrow, .truck--down .truck__arrow { transform: translateY(-50%); }
 .truck--left .truck__cargo, .truck--up .truck__cargo, .truck--down .truck__cargo { transform: none; }
+.truck--up-right, .truck--down-left { transform: rotate(-11deg) scale(1.05); }
+.truck--up-left, .truck--down-right { transform: rotate(11deg) scale(1.05); }
+.truck--up-right:active, .truck--down-left:active { transform: rotate(-11deg) scale(.94); }
+.truck--up-left:active, .truck--down-right:active { transform: rotate(11deg) scale(.94); }
 .truck.is-blocked { animation: shake .24s ease-in-out; filter: saturate(.5) brightness(.85); outline: 3px solid #ef3f53; }
 .parking-section.is-shaking { animation: shake .24s ease-in-out; }
 .hint { margin: 12px 0 8px; color: #708596; font-size: 10px; font-weight: 800; text-align: center; }
@@ -255,7 +259,7 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; }
   .package-queue { min-height: 43px; padding-block: 4px; }
   .package { width: 30px; height: 30px; }
   .parking-slot { height: 47px; }
-  .board-wrap { width: min(54vw, 220px); margin-top: 9px; }
+  .board-wrap { width: min(78vw, 34vh, 285px); margin-top: 9px; }
   .hint { margin-block: 7px 5px; }
 }
 
@@ -263,7 +267,7 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; }
   .app-shell { padding-inline: 9px; }
   .package-queue { gap: 5px; }
   .package { width: 30px; height: 30px; }
-  .board-wrap { width: 78%; }
+  .board-wrap { width: min(92vw, 330px); }
 }
 
 @media (prefers-reduced-motion: reduce) {
