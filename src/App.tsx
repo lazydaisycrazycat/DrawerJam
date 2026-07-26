@@ -40,7 +40,7 @@ export default function App() {
       exitX < field.right && Math.abs(exitX - field.left) < Math.abs(exitX - field.right)
     );
     const sideX = useLeftSide ? field.left - 34 : field.right + 34;
-    const cornerY = field.top - 24;
+    const cornerY = field.top + 42;
     const targetX = to.left + to.width / 2;
     const targetY = to.top + to.height / 2;
 
@@ -48,6 +48,9 @@ export default function App() {
     element.style.setProperty("--exit-y", `${exitY - startY}px`);
     element.style.setProperty("--corner-x", `${sideX - startX}px`);
     element.style.setProperty("--corner-y", `${cornerY - startY}px`);
+    element.style.setProperty("--staging-x", `${targetX - startX}px`);
+    element.style.setProperty("--staging-y", `${cornerY - startY}px`);
+    element.style.setProperty("--route-angle", useLeftSide ? "0deg" : "180deg");
     element.style.setProperty("--approach-x", `${targetX - startX}px`);
     element.style.setProperty("--approach-y", `${to.bottom + 28 - startY}px`);
     element.style.setProperty("--travel-x", `${targetX - startX}px`);

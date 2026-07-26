@@ -86,7 +86,7 @@ export function useGame() {
         };
       });
       setMovingTrucks((items) => items.filter((item) => item.id !== truck.id));
-    }, 1180);
+    }, 1320);
     return { slotIndex, direction: truck.direction };
   }, [flash, level, movingTrucks, state, telegram]);
 
