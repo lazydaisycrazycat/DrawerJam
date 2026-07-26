@@ -1,12 +1,10 @@
 import type { ParkingTruck } from "../../game/types";
-import type { PackageTransfer } from "../../game/packageProcessing";
 import { ParkedTruck } from "../Truck/Truck";
 
-export function Parking({ trucks, size, fullFeedback, transfers }: {
+export function Parking({ trucks, size, fullFeedback }: {
   trucks: ParkingTruck[];
   size: number;
   fullFeedback: boolean;
-  transfers: PackageTransfer[];
 }) {
   return (
     <section className={`parking-section${fullFeedback ? " is-shaking" : ""}`}>
@@ -21,16 +19,6 @@ export function Parking({ trucks, size, fullFeedback, transfers }: {
           </div>
         ))}
         {size < 4 && <div className="parking-slot parking-slot--locked"><span>+</span><b>LOCKED</b></div>}
-        {transfers.map((transfer) => {
-          const slot = trucks.find((truck) => truck.truckId === transfer.truckId)?.slotIndex ?? 0;
-          return (
-            <span
-              className={`package-flight package--${transfer.color}`}
-              style={{ left: `${(slot + 0.5) * 25}%` }}
-              key={transfer.packageId}
-            />
-          );
-        })}
       </div>
     </section>
   );

@@ -38,7 +38,7 @@ export function Truck({ truck, blocked, moving, onClick }: FieldProps) {
 
 export function ParkedTruck({ truck }: { truck: ParkingTruck }) {
   return (
-    <div className={`parked-truck truck--${truck.color}`}>
+    <div className={`parked-truck truck--${truck.color}`} data-parking-truck-id={truck.truckId}>
       <span>{colorSymbols[truck.color]}</span>
       <div className="load-dots" aria-label={`${truck.loaded} of ${truck.capacity} packages loaded`}>
         {Array.from({ length: truck.capacity }, (_, index) => <i className={index < truck.loaded ? "filled" : ""} key={index} />)}

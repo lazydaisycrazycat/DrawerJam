@@ -3,6 +3,7 @@ import { GameBoard } from "./components/GameBoard/GameBoard";
 import { GameHeader } from "./components/GameHeader/GameHeader";
 import { PackageQueue } from "./components/PackageQueue/PackageQueue";
 import { Parking } from "./components/Parking/Parking";
+import { PackageTransferLayer } from "./components/PackageTransferLayer/PackageTransferLayer";
 import { ResultModal } from "./components/ResultModal/ResultModal";
 import { useGame } from "./hooks/useGame";
 
@@ -65,8 +66,8 @@ export default function App() {
         trucks={game.state.parking}
         size={game.level.parkingSize}
         fullFeedback={game.feedback?.kind === "parking"}
-        transfers={game.packageTransfers}
       />
+      <PackageTransferLayer transfers={game.packageTransfers} />
       <GameBoard
         level={game.level}
         trucks={game.state.trucks}

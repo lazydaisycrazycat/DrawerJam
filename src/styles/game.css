@@ -145,8 +145,11 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; }
 .load-dots { display: flex; gap: 3px; }
 .load-dots i { width: 7px; height: 7px; border: 1px solid #fff; border-radius: 2px; background: #0002; }
 .load-dots i.filled { background: #fff; animation: load-pop .22s ease-out; }
+.package-transfer-layer {
+  position: absolute; z-index: 15; inset: 0; overflow: hidden; pointer-events: none;
+}
 .package-flight {
-  position: absolute; z-index: 8; top: 50%;
+  position: absolute; z-index: 8;
   width: 24px; height: 24px; pointer-events: none;
   border: 3px solid var(--package-dark); border-radius: 6px; background: var(--package-color);
   box-shadow: inset 0 3px 0 #fff7, 0 4px 0 var(--package-dark), 0 7px 10px #642f3f55;
@@ -277,10 +280,17 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; }
 @keyframes first-package { to { filter: drop-shadow(0 0 7px #ef5b5b); } }
 @keyframes danger-pulse { to { box-shadow: inset 0 0 20px #ef5b5b2e, 0 0 0 2px #ef5b5b55; } }
 @keyframes package-flight {
-  0% { opacity: 0; transform: translate(-50%, -165px) scale(.72) rotate(-12deg); }
-  18% { opacity: 1; }
-  75% { transform: translate(-50%, -20px) scale(1.08) rotate(8deg); }
-  100% { opacity: 0; transform: translate(-50%, 0) scale(.55) rotate(0); }
+  0% { opacity: .35; transform: translate(-50%, -50%) translate(0, 0) scale(.72) rotate(-12deg); }
+  12% { opacity: 1; }
+  52% {
+    opacity: 1;
+    transform: translate(-50%, -50%) translate(var(--flight-mid-x), var(--flight-mid-y)) scale(1.14) rotate(12deg);
+  }
+  88% { opacity: 1; }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) translate(var(--flight-end-x), var(--flight-end-y)) scale(.42) rotate(0);
+  }
 }
 @keyframes truck-exit {
   0% { opacity: 1; transform: translate(0, 0) rotate(var(--truck-angle)); }
