@@ -1,4 +1,3 @@
-import type { CSSProperties } from "react";
 import type { ParkingTruck } from "../../game/types";
 import type { PackageTransfer } from "../../game/packageProcessing";
 import { ParkedTruck } from "../Truck/Truck";
@@ -20,12 +19,12 @@ export function Parking({ trucks, size, fullFeedback, transfers }: {
           </div>
         ))}
         {size < 4 && <div className="parking-slot parking-slot--locked"><span>+</span><b>LOCKED</b></div>}
-        {transfers.map((transfer, index) => {
+        {transfers.map((transfer) => {
           const slot = Math.max(0, trucks.findIndex((truck) => truck.truckId === transfer.truckId));
           return (
             <span
               className={`package-flight package--${transfer.color}`}
-              style={{ "--flight-slot": slot, "--flight-index": index } as CSSProperties}
+              style={{ left: `${(slot + 0.5) * 25}%` }}
               key={transfer.packageId}
             />
           );

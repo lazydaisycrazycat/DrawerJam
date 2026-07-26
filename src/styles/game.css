@@ -146,11 +146,12 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; }
 .load-dots i { width: 7px; height: 7px; border: 1px solid #fff; border-radius: 2px; background: #0002; }
 .load-dots i.filled { background: #fff; animation: load-pop .22s ease-out; }
 .package-flight {
-  position: absolute; z-index: 8; top: 50%; left: calc((var(--flight-slot) + .5) * 25%);
+  position: absolute; z-index: 8; top: 50%;
   width: 24px; height: 24px; pointer-events: none;
   border: 3px solid var(--package-dark); border-radius: 6px; background: var(--package-color);
   box-shadow: inset 0 3px 0 #fff7, 0 4px 0 var(--package-dark), 0 7px 10px #642f3f55;
   animation: package-flight .68s cubic-bezier(.22,.7,.18,1) forwards;
+  will-change: transform, opacity;
 }
 .package-flight::before, .package-flight::after { content: ""; position: absolute; background: #ffffff88; }
 .package-flight::before { inset-block: 0; left: 8px; width: 3px; }
@@ -211,6 +212,7 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; }
 .truck.is-exiting {
   z-index: 10; pointer-events: none;
   animation: truck-exit .43s cubic-bezier(.2,.65,.3,1) forwards;
+  will-change: transform, opacity;
 }
 .truck.is-blocked {
   z-index: 9; animation: blocked-drive .5s cubic-bezier(.3,.05,.2,1);
@@ -313,5 +315,10 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+  .conveyor-markings, .confetti i, .conveyor--danger, .moving-package.is-first {
+    animation: none !important;
+  }
+  .package-flight { animation-duration: .85s; }
+  .truck.is-exiting, .parked-truck { animation-duration: .55s; }
+  .truck.is-blocked { animation-duration: .65s; }
 }
