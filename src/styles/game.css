@@ -214,7 +214,7 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; }
 .truck:active { transform: rotate(var(--truck-angle)) scale(.92); }
 .truck.is-exiting {
   z-index: 10; pointer-events: none;
-  animation: truck-exit 1.18s linear forwards;
+  animation: truck-exit 1.32s linear forwards;
   will-change: transform, opacity;
 }
 .truck.is-blocked {
@@ -294,15 +294,19 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; }
 }
 @keyframes truck-exit {
   0% { opacity: 1; transform: translate(0, 0) rotate(var(--truck-angle)); }
-  22% {
+  24% {
     opacity: 1;
     transform: translate(var(--exit-x, 0), var(--exit-y, -100px)) rotate(var(--truck-angle));
   }
-  52% {
+  47% {
     opacity: 1;
     transform: translate(var(--corner-x, -120px), var(--corner-y, -120px)) rotate(-90deg);
   }
-  78% {
+  68% {
+    opacity: 1;
+    transform: translate(var(--staging-x, 0), var(--staging-y, -80px)) rotate(var(--route-angle, 0deg)) scale(.9);
+  }
+  86% {
     opacity: 1;
     transform: translate(var(--approach-x, 0), var(--approach-y, -100px)) rotate(-90deg) scale(.86);
   }
@@ -343,7 +347,7 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; }
     animation: none !important;
   }
   .package-flight { animation-duration: .85s; }
-  .truck.is-exiting { animation-duration: 1.18s; }
+  .truck.is-exiting { animation-duration: 1.32s; }
   .parked-truck { animation-duration: .2s; }
   .truck.is-blocked { animation-duration: .65s; }
 }
