@@ -105,6 +105,14 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; }
 }
 .fog-bonus span { margin-bottom: 3px; font-size: 9px; }
 .fog-bonus:disabled { background: linear-gradient(#c9fff4, #5edbb9); border-color: #24896d; box-shadow: inset 0 2px 0 #fff9, 0 3px 0 #1a7158; opacity: 1; }
+.is-tutorial-target { z-index: 8; animation: tutorial-pulse .72s ease-in-out infinite alternate !important; }
+.tutorial-hint {
+  position: relative; z-index: 7; margin: 8px auto 2px; width: min(92%, 360px); padding: 9px 14px;
+  border: 2px solid #f0b720; border-radius: 16px; background: linear-gradient(135deg, #fffdf0, #ffe9a9);
+  box-shadow: 0 4px 0 #d69119, 0 7px 16px #7c3e2630; color: #6e3d32; text-align: center;
+}
+.tutorial-hint span { color: #c66b13; font-size: 10px; font-weight: 1000; letter-spacing: .09em; }
+.tutorial-hint p { margin: 2px 0 0; font-size: 10px; font-weight: 800; line-height: 1.25; }
 .danger-meter { position: absolute; right: 10px; bottom: 7px; left: 10px; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 6px; }
 .danger-meter span { color: #718896; font-size: 7px; font-weight: 900; }
 .danger-meter i { height: 6px; overflow: hidden; border-radius: 5px; background: #d6e1e6; }
@@ -306,6 +314,10 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; }
 @keyframes belt-flow { to { stroke-dashoffset: -22; } }
 @keyframes first-package { to { filter: drop-shadow(0 0 7px #ef5b5b); } }
 @keyframes danger-pulse { to { box-shadow: inset 0 0 20px #ef5b5b2e, 0 0 0 2px #ef5b5b55; } }
+@keyframes tutorial-pulse {
+  from { filter: brightness(1) drop-shadow(0 0 2px #fff); }
+  to { filter: brightness(1.14) drop-shadow(0 0 9px #ffd739); transform: scale(1.08); }
+}
 @keyframes package-flight {
   0% { opacity: .35; transform: translate(-50%, -50%) translate(0, 0) scale(.72) rotate(-12deg); }
   12% { opacity: 1; }

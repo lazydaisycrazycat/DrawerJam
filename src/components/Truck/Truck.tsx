@@ -8,10 +8,11 @@ type FieldProps = {
   truck: TruckType;
   blocked: boolean;
   moving: boolean;
+  highlighted?: boolean;
   onClick: (element: HTMLButtonElement) => void;
 };
 
-export function Truck({ truck, blocked, moving, onClick }: FieldProps) {
+export function Truck({ truck, blocked, moving, highlighted, onClick }: FieldProps) {
   const width = truck.capacity === 10 ? "190%" : truck.capacity === 6 ? "145%" : "100%";
   const style = {
     gridRow: truck.row + 1,
@@ -21,7 +22,7 @@ export function Truck({ truck, blocked, moving, onClick }: FieldProps) {
 
   return (
     <button
-      className={`truck truck--${truck.color} truck--${truck.direction}${blocked ? " is-blocked" : ""}${moving ? " is-exiting" : ""}`}
+      className={`truck truck--${truck.color} truck--${truck.direction}${blocked ? " is-blocked" : ""}${moving ? " is-exiting" : ""}${highlighted ? " is-tutorial-target" : ""}`}
       style={style}
       onClick={(event: MouseEvent<HTMLButtonElement>) => onClick(event.currentTarget)}
       aria-label={`${truck.color} truck, points ${truck.direction}`}
