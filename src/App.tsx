@@ -13,11 +13,44 @@ export default function App() {
     const movement = game.selectTruck(id);
     if (!movement) return;
     const slot = document.querySelector<HTMLElement>(`[data-parking-slot="${movement.slotIndex}"]`);
-    if (!slot) return;
+    const board = document.querySelector<HTMLElement>(".board-wrap");
+    if (!slot || !board) return;
     const from = element.getBoundingClientRect();
     const to = slot.getBoundingClientRect();
-    element.style.setProperty("--travel-x", `${to.left + to.width / 2 - (from.left + from.width / 2)}px`);
-    element.style.setProperty("--travel-y", `${to.top + to.height / 2 - (from.top + from.height / 2)}px`);
+    const field = board.getBoundingClientRect();
+    const startX = from.left + from.width / 2;
+    const startY = from.top + from.height / 2;
+    const vectors = {
+      up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0],
+      "up-left": [-Math.SQRT1_2, -Math.SQRT1_2],
+      "up-right": [Math.SQRT1_2, -Math.SQRT1_2],
+      "down-left": [-Math.SQRT1_2, Math.SQRT1_2],
+      "down-right": [Math.SQRT1_2, Math.SQRT1_2]
+    } as const;
+    const [dx, dy] = vectors[movement.direction];
+    const distances = [
+      dx > 0 ? (field.right + 32 - startX) / dx : dx < 0 ? (field.left - 32 - startX) / dx : Infinity,
+      dy > 0 ? (field.bottom + 32 - startY) / dy : dy < 0 ? (field.top - 32 - startY) / dy : Infinity
+    ].filter((distance) => distance > 0);
+    const exitDistance = Math.min(...distances);
+    const exitX = startX + dx * exitDistance;
+    const exitY = startY + dy * exitDistance;
+    const useLeftSide = exitX <= field.left || (
+      exitX < field.right && Math.abs(exitX - field.left) < Math.abs(exitX - field.right)
+    );
+    const sideX = useLeftSide ? field.left - 34 : field.right + 34;
+    const cornerY = field.top - 24;
+    const targetX = to.left + to.width / 2;
+    const targetY = to.top + to.height / 2;
+
+    element.style.setProperty("--exit-x", `${exitX - startX}px`);
+    element.style.setProperty("--exit-y", `${exitY - startY}px`);
+    element.style.setProperty("--corner-x", `${sideX - startX}px`);
+    element.style.setProperty("--corner-y", `${cornerY - startY}px`);
+    element.style.setProperty("--approach-x", `${targetX - startX}px`);
+    element.style.setProperty("--approach-y", `${to.bottom + 28 - startY}px`);
+    element.style.setProperty("--travel-x", `${targetX - startX}px`);
+    element.style.setProperty("--travel-y", `${targetY - startY}px`);
   }
   return (
     <main className="app-shell">

@@ -15,12 +15,14 @@ export function Parking({ trucks, size, fullFeedback, transfers }: {
         {Array.from({ length: size }, (_, index) => (
           <div className="parking-slot" data-parking-slot={index} key={index}>
             <span className="slot-number">{index + 1}</span>
-            {trucks[index] && <ParkedTruck truck={trucks[index]} />}
+            {trucks.find((truck) => truck.slotIndex === index) && (
+              <ParkedTruck truck={trucks.find((truck) => truck.slotIndex === index)!} />
+            )}
           </div>
         ))}
         {size < 4 && <div className="parking-slot parking-slot--locked"><span>+</span><b>LOCKED</b></div>}
         {transfers.map((transfer) => {
-          const slot = Math.max(0, trucks.findIndex((truck) => truck.truckId === transfer.truckId));
+          const slot = trucks.find((truck) => truck.truckId === transfer.truckId)?.slotIndex ?? 0;
           return (
             <span
               className={`package-flight package--${transfer.color}`}

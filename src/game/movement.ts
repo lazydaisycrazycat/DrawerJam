@@ -27,8 +27,17 @@ export function removeTruckFromField(trucks: Truck[], truckId: string): Truck[] 
   return trucks.filter((truck) => truck.id !== truckId);
 }
 
-export function addTruckToParking(parking: ParkingTruck[], truck: Truck): ParkingTruck[] {
-  return [...parking, { truckId: truck.id, color: truck.color, capacity: truck.capacity, loaded: 0 }];
+export function addTruckToParking(
+  parking: ParkingTruck[],
+  truck: Truck,
+  reservedSlot?: number
+): ParkingTruck[] {
+  const occupiedSlots = new Set(parking.map((item) => item.slotIndex));
+  const slotIndex = reservedSlot ?? Array.from(
+    { length: parking.length + 1 },
+    (_, index) => index
+  ).find((index) => !occupiedSlots.has(index)) ?? parking.length;
+  return [...parking, { truckId: truck.id, slotIndex, color: truck.color, capacity: truck.capacity, loaded: 0 }];
 }
 
 export function hasParkingSpace(parking: ParkingTruck[], level: LevelConfig): boolean {
