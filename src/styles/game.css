@@ -147,48 +147,62 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; }
 
 .board-wrap {
   position: relative; width: min(88vw, 42vh, 400px); aspect-ratio: 1; margin: 15px auto 0;
-  padding: 9px; border: 3px solid #e2aca4; border-radius: 24px;
-  background: linear-gradient(#f7d7d0, #eabeb7);
-  box-shadow: inset 0 3px 0 #fff, 0 6px 0 #bd7774, 0 12px 24px #7f3b462d;
+  padding: 4px;
 }
 .game-board {
   position: relative; display: grid; width: 100%; height: 100%; gap: 4px; padding: 4px;
-  overflow: hidden; border-radius: 15px; background: #edcbc5;
+  overflow: visible; background: transparent;
 }
 .grid-cell {
   min-width: 0; min-height: 0; border-radius: 7px;
-  background: linear-gradient(145deg, #ffece7, #f4d4cf);
-  box-shadow: inset 0 1px 2px #a8616822;
+  background: transparent;
+  box-shadow: none;
 }
-.road { position: absolute; z-index: 0; background: #b87776; }
+.road { display: none; }
 .road--top, .road--bottom { left: 38%; width: 24%; height: 18px; }
 .road--top { top: -18px; } .road--bottom { bottom: -18px; }
 .road--left, .road--right { top: 38%; width: 18px; height: 24%; }
 .road--left { left: -18px; } .road--right { right: -18px; }
 
 .truck {
-  position: relative; z-index: 2; align-self: stretch; justify-self: stretch; margin: 2px; padding: 0;
+  position: relative; z-index: 2; width: var(--truck-width); height: 72%;
+  align-self: center; justify-self: center; margin: 0; padding: 0;
   overflow: visible; border: 3px solid var(--package-dark); border-radius: 11px;
   background:
     repeating-linear-gradient(135deg, transparent 0 3px, #ffffff3d 3px 5px, #00000012 5px 7px),
     var(--package-color);
   box-shadow: inset 0 4px 0 #ffffff75, inset 0 -3px 0 #0002, 0 4px 0 var(--package-dark), 0 7px 7px #51222f4a;
-  color: #fff; cursor: pointer; transition: filter .15s, transform .15s; animation: truck-arrive .28s ease-out;
+  color: #fff; cursor: pointer; transform-origin: center;
+  transition: filter .15s, transform .15s; animation: truck-arrive .28s ease-out;
 }
-.truck:active { transform: scale(.91); }
+.truck:active { transform: scale(.92); }
 .truck__cargo { position: absolute; left: 8%; top: 9%; display: grid; width: 18px; height: 18px; place-items: center; border: 2px solid #fff8; border-radius: 50%; background: #0002; font-size: clamp(7px, 2vw, 10px); }
 .truck__arrow { position: absolute; z-index: 2; right: 26%; top: 50%; color: #fff; font-size: clamp(17px, 4.7vw, 25px); font-weight: 900; line-height: 1; transform: translateY(-50%); text-shadow: -1px -1px 0 #603543, 1px -1px 0 #603543, -1px 1px 0 #603543, 1px 1px 0 #603543, 0 2px 0 #603543; }
 .truck__cab { position: absolute; right: -2px; top: 13%; width: 27%; height: 74%; border: 2px solid var(--package-dark); border-radius: 3px 7px 7px 3px; background: linear-gradient(135deg, #fff8, #ffffff26); }
+.truck__capacity {
+  position: absolute; right: 4%; top: -9px; z-index: 3; display: grid; min-width: 18px; height: 18px;
+  padding-inline: 3px; place-items: center; border: 2px solid #fff; border-radius: 10px;
+  background: var(--package-dark); box-shadow: 0 2px 0 #55202d66;
+  color: #fff; font-size: 8px; font-weight: 900; line-height: 1;
+}
 .truck__wheel { position: absolute; width: 12%; aspect-ratio: 1; border: 2px solid #22303d; border-radius: 50%; background: #788690; }
 .truck__wheel--one { left: 18%; bottom: -8%; } .truck__wheel--two { right: 17%; bottom: -8%; }
-.truck--left, .truck--up, .truck--down { transform: none; }
-.truck--left:active, .truck--up:active, .truck--down:active { transform: scale(.91); }
-.truck--left .truck__arrow, .truck--up .truck__arrow, .truck--down .truck__arrow { transform: translateY(-50%); }
-.truck--left .truck__cargo, .truck--up .truck__cargo, .truck--down .truck__cargo { transform: none; }
-.truck--up-right, .truck--down-left { transform: rotate(-11deg) scale(1.05); }
-.truck--up-left, .truck--down-right { transform: rotate(11deg) scale(1.05); }
-.truck--up-right:active, .truck--down-left:active { transform: rotate(-11deg) scale(.94); }
-.truck--up-left:active, .truck--down-right:active { transform: rotate(11deg) scale(.94); }
+.truck--right { transform: rotate(0deg); }
+.truck--down-right { transform: rotate(45deg); }
+.truck--down { transform: rotate(90deg); }
+.truck--down-left { transform: rotate(135deg); }
+.truck--left { transform: rotate(180deg); }
+.truck--up-left { transform: rotate(-135deg); }
+.truck--up { transform: rotate(-90deg); }
+.truck--up-right { transform: rotate(-45deg); }
+.truck--right:active { transform: rotate(0deg) scale(.92); }
+.truck--down-right:active { transform: rotate(45deg) scale(.92); }
+.truck--down:active { transform: rotate(90deg) scale(.92); }
+.truck--down-left:active { transform: rotate(135deg) scale(.92); }
+.truck--left:active { transform: rotate(180deg) scale(.92); }
+.truck--up-left:active { transform: rotate(-135deg) scale(.92); }
+.truck--up:active { transform: rotate(-90deg) scale(.92); }
+.truck--up-right:active { transform: rotate(-45deg) scale(.92); }
 .truck.is-blocked { animation: shake .24s ease-in-out; filter: saturate(.5) brightness(.85); outline: 3px solid #ef3f53; }
 .parking-section.is-shaking { animation: shake .24s ease-in-out; }
 .hint { margin: 12px 0 8px; color: #708596; font-size: 10px; font-weight: 800; text-align: center; }
