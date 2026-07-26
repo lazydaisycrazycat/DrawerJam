@@ -6,7 +6,7 @@ type Props = {
   trucks: TruckType[];
   blockedTruckId?: string;
   movingTruckIds: string[];
-  onTruckClick: (id: string) => void;
+  onTruckClick: (id: string, element: HTMLButtonElement) => void;
 };
 
 export function GameBoard({ level, trucks, blockedTruckId, movingTruckIds, onTruckClick }: Props) {
@@ -22,7 +22,7 @@ export function GameBoard({ level, trucks, blockedTruckId, movingTruckIds, onTru
             truck={truck}
             blocked={blockedTruckId === truck.id}
             moving={movingTruckIds.includes(truck.id)}
-            onClick={() => onTruckClick(truck.id)}
+            onClick={(element) => onTruckClick(truck.id, element)}
           />
         ))}
       </div>

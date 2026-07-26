@@ -52,19 +52,20 @@ export function useGame() {
   }, []);
 
   const selectTruck = useCallback((truckId: string) => {
-    if (state.status !== "playing") return;
+    if (state.status !== "playing" || packageTransfers.length) return null;
     const truck = state.trucks.find((item) => item.id === truckId);
-    if (!truck || movingTruckIds.includes(truckId)) return;
+    if (!truck || movingTruckIds.includes(truckId)) return null;
     if (!canTruckExit(truck, state.trucks, level.rows, level.cols)) {
       flash({ kind: "truck", id: truckId });
       telegram.error();
-      return;
+      return null;
     }
     if (state.parking.length + movingTruckIds.length >= level.parkingSize) {
       flash({ kind: "parking", id: "parking" });
       telegram.error();
-      return;
+      return null;
     }
+    const slotIndex = state.parking.length + movingTruckIds.length;
     setMovingTruckIds((items) => [...items, truck.id]);
     telegram.impact();
     window.setTimeout(() => {
@@ -78,11 +79,12 @@ export function useGame() {
         };
       });
       setMovingTruckIds((items) => items.filter((id) => id !== truck.id));
-    }, 430);
-  }, [flash, level, movingTruckIds, state, telegram]);
+    }, 620);
+    return { slotIndex };
+  }, [flash, level, movingTruckIds, packageTransfers.length, state, telegram]);
 
   useEffect(() => {
-    if (packageTransfers.length) return;
+    if (packageTransfers.length || movingTruckIds.length) return;
     if (
       state.status !== "playing" ||
       !canProcessNextPackage(state.packages, state.parking, visiblePackageCount)
@@ -95,6 +97,7 @@ export function useGame() {
     setPackageTransfers(wave.transfers);
   }, [
     level.parkingSize,
+    movingTruckIds.length,
     packageTransfers.length,
     state.packages,
     state.parking,

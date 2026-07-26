@@ -8,6 +8,17 @@ import { useGame } from "./hooks/useGame";
 
 export default function App() {
   const game = useGame();
+
+  function handleTruckClick(id: string, element: HTMLButtonElement) {
+    const movement = game.selectTruck(id);
+    if (!movement) return;
+    const slot = document.querySelector<HTMLElement>(`[data-parking-slot="${movement.slotIndex}"]`);
+    if (!slot) return;
+    const from = element.getBoundingClientRect();
+    const to = slot.getBoundingClientRect();
+    element.style.setProperty("--travel-x", `${to.left + to.width / 2 - (from.left + from.width / 2)}px`);
+    element.style.setProperty("--travel-y", `${to.top + to.height / 2 - (from.top + from.height / 2)}px`);
+  }
   return (
     <main className="app-shell">
       <GameHeader level={game.level.id} onPrevious={game.previousLevel} />
@@ -28,7 +39,7 @@ export default function App() {
         trucks={game.state.trucks}
         movingTruckIds={game.movingTruckIds}
         blockedTruckId={game.feedback?.kind === "truck" ? game.feedback.id : undefined}
-        onTruckClick={game.selectTruck}
+        onTruckClick={handleTruckClick}
       />
       <p className={`hint${game.isProcessing ? " is-loading" : ""}`}>
         {game.isProcessing ? "Loading matching packages…" : "Tap a truck with a clear path to its arrow"}

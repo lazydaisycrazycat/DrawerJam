@@ -39,6 +39,21 @@ function solve(level: LevelConfig): string[] | null {
 }
 
 for (const level of levels) {
+  const packageCapacity = new Map<string, number>();
+  const truckCapacity = new Map<string, number>();
+  for (const item of level.packages) {
+    packageCapacity.set(item.color, (packageCapacity.get(item.color) ?? 0) + 1);
+  }
+  for (const truck of level.trucks) {
+    truckCapacity.set(truck.color, (truckCapacity.get(truck.color) ?? 0) + truck.capacity);
+  }
+  for (const [color, count] of packageCapacity) {
+    if (truckCapacity.get(color) !== count) {
+      throw new Error(
+        `Level ${level.id}: ${color} package count (${count}) does not match truck capacity (${truckCapacity.get(color) ?? 0})`
+      );
+    }
+  }
   const solution = solve(level);
   if (!solution) throw new Error(`Level ${level.id} has no solution`);
   console.log(`Level ${level.id}: ${solution.join(" -> ")}`);

@@ -1,10 +1,15 @@
-import type { CSSProperties } from "react";
+import type { CSSProperties, MouseEvent } from "react";
 import type { ParkingTruck, Truck as TruckType, TruckColor } from "../../game/types";
 
 export const colorSymbols: Record<TruckColor, string> = {
   red: "●", blue: "■", green: "▲", yellow: "★"
 };
-type FieldProps = { truck: TruckType; blocked: boolean; moving: boolean; onClick: () => void };
+type FieldProps = {
+  truck: TruckType;
+  blocked: boolean;
+  moving: boolean;
+  onClick: (element: HTMLButtonElement) => void;
+};
 
 export function Truck({ truck, blocked, moving, onClick }: FieldProps) {
   const width = truck.capacity === 10 ? "190%" : truck.capacity === 6 ? "145%" : "100%";
@@ -18,7 +23,7 @@ export function Truck({ truck, blocked, moving, onClick }: FieldProps) {
     <button
       className={`truck truck--${truck.color} truck--${truck.direction}${blocked ? " is-blocked" : ""}${moving ? " is-exiting" : ""}`}
       style={style}
-      onClick={onClick}
+      onClick={(event: MouseEvent<HTMLButtonElement>) => onClick(event.currentTarget)}
       aria-label={`${truck.color} truck, points ${truck.direction}`}
     >
       <span className="truck__cargo">{colorSymbols[truck.color]}</span>

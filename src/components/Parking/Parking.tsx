@@ -13,7 +13,7 @@ export function Parking({ trucks, size, fullFeedback, transfers }: {
       <div className="section-heading"><h2>Parking</h2><span>{trucks.length}/{size}</span></div>
       <div className="parking">
         {Array.from({ length: size }, (_, index) => (
-          <div className="parking-slot" key={index}>
+          <div className="parking-slot" data-parking-slot={index} key={index}>
             <span className="slot-number">{index + 1}</span>
             {trucks[index] && <ParkedTruck truck={trucks[index]} />}
           </div>
