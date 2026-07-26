@@ -5,6 +5,7 @@ import { PackageQueue } from "./components/PackageQueue/PackageQueue";
 import { Parking } from "./components/Parking/Parking";
 import { PackageTransferLayer } from "./components/PackageTransferLayer/PackageTransferLayer";
 import { ResultModal } from "./components/ResultModal/ResultModal";
+import { TutorialHint } from "./components/TutorialHint/TutorialHint";
 import { useGame } from "./hooks/useGame";
 
 export default function App() {
@@ -118,6 +119,7 @@ export default function App() {
         transfers={game.packageTransfers}
         fogCleared={game.fogCleared}
         onClearFog={game.clearFog}
+        highlightFogBonus={game.tutorialStep === "fog"}
       />
       <Parking
         trucks={game.state.parking}
@@ -129,9 +131,11 @@ export default function App() {
         level={game.level}
         trucks={game.state.trucks}
         movingTruckIds={game.movingTruckIds}
+        highlightedTruckId={game.tutorialTargetTruckId}
         blockedTruckId={game.feedback?.kind === "truck" ? game.feedback.id : undefined}
         onTruckClick={handleTruckClick}
       />
+      {game.tutorialStep && <TutorialHint step={game.tutorialStep} />}
       <p className={`hint${game.isProcessing ? " is-loading" : ""}`}>
         {game.isProcessing ? "Loading matching packages…" : "Tap a truck with a clear path to its arrow"}
       </p>

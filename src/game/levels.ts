@@ -16,6 +16,15 @@ const packages = (sequence: TruckColor[]): PackageItem[] =>
 
 export const levels: LevelConfig[] = [
   {
+    id: 0, tutorial: true, rows: 5, cols: 5, parkingSize: 2, truckCapacity: 3, conveyorSeconds: 80,
+    conveyorPoints: [{ x: 18, y: 165 }, { x: 92, y: 165 }, { x: 92, y: 52 }, { x: 268, y: 52 }, { x: 268, y: 150 }, { x: 342, y: 150 }],
+    trucks: [
+      truck("tutorial-red", 3, 2, "red", "down"),
+      truck("tutorial-blue", 1, 3, "blue", "up")
+    ],
+    packages: packages(["red", "red", "red", "blue", "blue", "blue"])
+  },
+  {
     id: 1, rows: 5, cols: 5, parkingSize: 3, truckCapacity: 3, conveyorSeconds: 48,
     conveyorPoints: [{ x: 18, y: 165 }, { x: 92, y: 165 }, { x: 92, y: 52 }, { x: 268, y: 52 }, { x: 268, y: 150 }, { x: 342, y: 150 }],
     trucks: [

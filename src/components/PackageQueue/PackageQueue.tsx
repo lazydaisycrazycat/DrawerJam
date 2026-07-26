@@ -27,13 +27,14 @@ function pointOnRoute(points: Point[], progress: number): Point {
   return points.at(-1) ?? { x: 0, y: 0 };
 }
 
-export function PackageQueue({ packages, level, progress, transfers, fogCleared, onClearFog }: {
+export function PackageQueue({ packages, level, progress, transfers, fogCleared, onClearFog, highlightFogBonus }: {
   packages: PackageItem[];
   level: LevelConfig;
   progress: number;
   transfers: PackageTransfer[];
   fogCleared: boolean;
   onClearFog: () => void;
+  highlightFogBonus?: boolean;
 }) {
   const route = level.conveyorPoints.map(({ x, y }) => `${x},${y}`).join(" ");
   const movingPackages = useMemo(() => packages.map((item, index) => ({
@@ -77,7 +78,7 @@ export function PackageQueue({ packages, level, progress, transfers, fogCleared,
           ))}
           <polyline className="conveyor-fog" pathLength="1" points={route} />
         </svg>
-        <button className="fog-bonus" onClick={onClearFog} disabled={fogCleared}>
+        <button className={`fog-bonus${highlightFogBonus ? " is-tutorial-target" : ""}`} onClick={onClearFog} disabled={fogCleared}>
           <span>{fogCleared ? "5s" : "FOG"}</span>
           {fogCleared ? "Open" : "Clear"}
         </button>

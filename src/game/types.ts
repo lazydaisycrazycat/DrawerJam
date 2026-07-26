@@ -34,6 +34,7 @@ export type ParkingTruck = {
 
 export type LevelConfig = {
   id: number;
+  tutorial?: boolean;
   rows: number;
   cols: number;
   parkingSize: number;

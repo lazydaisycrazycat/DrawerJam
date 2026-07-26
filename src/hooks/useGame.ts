@@ -19,9 +19,9 @@ const storageKey = "parcel-jam-progress";
 
 function readUnlockedLevel(): number {
   try {
-    return Number(localStorage.getItem(storageKey) ?? 1);
+    return Number(localStorage.getItem(storageKey) ?? 0);
   } catch {
-    return 1;
+    return 0;
   }
 }
 
@@ -36,7 +36,7 @@ function saveUnlockedLevel(level: number): void {
 export function useGame() {
   const [levelIndex, setLevelIndex] = useState(() => {
     const saved = readUnlockedLevel();
-    return Math.min(Math.max(saved - 1, 0), levels.length - 1);
+    return Math.min(Math.max(saved, 0), levels.length - 1);
   });
   const level = levels[levelIndex];
   const [state, setState] = useState(() => createInitialState(level));
@@ -57,6 +57,11 @@ export function useGame() {
     if (state.status !== "playing") return null;
     const truck = state.trucks.find((item) => item.id === truckId);
     if (!truck || movingTrucks.some((item) => item.id === truckId)) return null;
+    if (level.tutorial && state.trucks[0]?.id !== truckId) {
+      flash({ kind: "truck", id: truckId });
+      telegram.error();
+      return null;
+    }
     if (!canTruckExit(truck, state.trucks, level.rows, level.cols)) {
       flash({ kind: "truck", id: truckId });
       telegram.error();
@@ -152,7 +157,7 @@ export function useGame() {
     if (state.status === "won") {
       setIsProcessing(false);
       telegram.success();
-      saveUnlockedLevel(Math.min(level.id + 1, levels.length));
+      saveUnlockedLevel(Math.min(level.id + 1, levels.length - 1));
     }
   }, [level.id, state.status, telegram]);
 
@@ -194,6 +199,15 @@ export function useGame() {
     isProcessing,
     movingTruckIds: movingTrucks.map((item) => item.id),
     packageTransfers,
+    tutorialTargetTruckId: level.tutorial ? state.trucks[0]?.id : undefined,
+    tutorialStep: level.tutorial
+      ? state.trucks.some((truck) => truck.id === "tutorial-red")
+        ? movingTrucks.some((truck) => truck.id === "tutorial-red") ? "driving" : "red"
+        : state.parking.some((truck) => truck.truckId === "tutorial-red") ? "loading"
+        : state.trucks.some((truck) => truck.id === "tutorial-blue")
+          ? movingTrucks.some((truck) => truck.id === "tutorial-blue") ? "driving" : "blue"
+          : state.packages.length && !fogCleared ? "fog" : "loading"
+      : null,
     fogCleared,
     clearFog,
     selectTruck, restart,

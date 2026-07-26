@@ -6,10 +6,11 @@ type Props = {
   trucks: TruckType[];
   blockedTruckId?: string;
   movingTruckIds: string[];
+  highlightedTruckId?: string;
   onTruckClick: (id: string, element: HTMLButtonElement) => void;
 };
 
-export function GameBoard({ level, trucks, blockedTruckId, movingTruckIds, onTruckClick }: Props) {
+export function GameBoard({ level, trucks, blockedTruckId, movingTruckIds, highlightedTruckId, onTruckClick }: Props) {
   return (
     <section className="board-wrap" aria-label="Truck yard">
       <div className="road road--top" /><div className="road road--right" />
@@ -22,6 +23,7 @@ export function GameBoard({ level, trucks, blockedTruckId, movingTruckIds, onTru
             truck={truck}
             blocked={blockedTruckId === truck.id}
             moving={movingTruckIds.includes(truck.id)}
+            highlighted={highlightedTruckId === truck.id}
             onClick={(element) => onTruckClick(truck.id, element)}
           />
         ))}
