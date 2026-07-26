@@ -1,7 +1,7 @@
 import { createInitialState } from "../src/game/createInitialState";
 import { levels } from "../src/game/levels";
 import { addTruckToParking, canTruckExit, hasParkingSpace, removeTruckFromField } from "../src/game/movement";
-import { processPackages } from "../src/game/packageProcessing";
+import { processPackageWave, processPackages } from "../src/game/packageProcessing";
 import type { GameState, LevelConfig } from "../src/game/types";
 import { getGameStatus } from "../src/game/winLoseConditions";
 
@@ -43,3 +43,16 @@ for (const level of levels) {
   if (!solution) throw new Error(`Level ${level.id} has no solution`);
   console.log(`Level ${level.id}: ${solution.join(" -> ")}`);
 }
+
+const visibilityCheck = processPackageWave(
+  [
+    { id: "visible-red", color: "red" },
+    { id: "hidden-blue", color: "blue" }
+  ],
+  [{ truckId: "blue-truck", color: "blue", capacity: 3, loaded: 0 }],
+  1
+);
+if (visibilityCheck.loaded !== 0 || visibilityCheck.packages.length !== 2) {
+  throw new Error("A truck loaded a package that was not visible on the conveyor");
+}
+console.log("Visibility rule: hidden packages cannot be loaded");

@@ -1,28 +1,47 @@
 import type { PackageItem, ParkingTruck } from "./types";
 
 export type PackageResult = { packages: PackageItem[]; parking: ParkingTruck[]; loaded: number };
+export const CONVEYOR_PACKAGE_SPACING = 0.068;
 
-export function canProcessNextPackage(packages: PackageItem[], parking: ParkingTruck[]): boolean {
+export function getVisiblePackageCount(packages: PackageItem[], conveyorProgress: number): number {
+  return Math.min(packages.length, Math.floor(conveyorProgress / CONVEYOR_PACKAGE_SPACING) + 1);
+}
+
+export function canProcessNextPackage(
+  packages: PackageItem[],
+  parking: ParkingTruck[],
+  availableCount = packages.length
+): boolean {
+  const availablePackages = packages.slice(0, availableCount);
   return parking.some(
-    (truck) => truck.loaded < truck.capacity && packages.some((item) => item.color === truck.color)
+    (truck) => truck.loaded < truck.capacity && availablePackages.some((item) => item.color === truck.color)
   );
 }
 
-export function processNextPackage(sourcePackages: PackageItem[], sourceParking: ParkingTruck[]): PackageResult {
+export function processNextPackage(
+  sourcePackages: PackageItem[],
+  sourceParking: ParkingTruck[],
+  availableCount = sourcePackages.length
+): PackageResult {
   const packages = sourcePackages.map((item) => ({ ...item }));
   const parking = sourceParking.map((item) => ({ ...item }));
+  const availablePackages = packages.slice(0, availableCount);
   const truckIndex = parking.findIndex((truck) =>
-    truck.loaded < truck.capacity && packages.some((item) => item.color === truck.color)
+    truck.loaded < truck.capacity && availablePackages.some((item) => item.color === truck.color)
   );
   if (truckIndex < 0) return { packages, parking, loaded: 0 };
-  const packageIndex = packages.findIndex((item) => item.color === parking[truckIndex].color);
+  const packageIndex = availablePackages.findIndex((item) => item.color === parking[truckIndex].color);
   packages.splice(packageIndex, 1);
   parking[truckIndex].loaded += 1;
   if (parking[truckIndex].loaded >= parking[truckIndex].capacity) parking.splice(truckIndex, 1);
   return { packages, parking, loaded: 1 };
 }
 
-export function processPackageWave(sourcePackages: PackageItem[], sourceParking: ParkingTruck[]): PackageResult {
+export function processPackageWave(
+  sourcePackages: PackageItem[],
+  sourceParking: ParkingTruck[],
+  availableCount = sourcePackages.length
+): PackageResult {
   const packages = sourcePackages.map((item) => ({ ...item }));
   const parking = sourceParking.map((item) => ({ ...item }));
   const reserved = new Set<number>();
@@ -30,7 +49,7 @@ export function processPackageWave(sourcePackages: PackageItem[], sourceParking:
   for (const truck of parking) {
     if (truck.loaded >= truck.capacity) continue;
     const packageIndex = packages.findIndex(
-      (item, index) => item.color === truck.color && !reserved.has(index)
+      (item, index) => index < availableCount && item.color === truck.color && !reserved.has(index)
     );
     if (packageIndex < 0) continue;
     reserved.add(packageIndex);
