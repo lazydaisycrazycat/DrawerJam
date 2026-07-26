@@ -42,7 +42,7 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; }
 }
 
 .game-header { display: grid; grid-template-columns: 42px 1fr 42px; align-items: center; text-align: center; }
-.game-header div span { color: #7a8da0; font-size: 9px; font-weight: 900; letter-spacing: .22em; }
+.header-title > span { color: #7a8da0; font-size: 9px; font-weight: 900; letter-spacing: .22em; }
 .game-header h1 { margin: -1px 0 0; color: var(--ink); font-size: clamp(20px, 5.5vw, 26px); line-height: 1.1; }
 .round-button {
   width: 38px; height: 38px; border: 1px solid #cbdbe5; border-radius: 13px;
@@ -52,18 +52,28 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; }
 }
 .round-button:disabled { opacity: .35; }
 .settings-button { font-size: 15px; }
+.header-menu { position: relative; }
+.header-menu aside {
+  position: absolute; z-index: 19; top: 46px; right: 0; display: grid; width: 132px; gap: 5px; padding: 7px;
+  border: 2px solid #d19a36; border-radius: 14px; background: #fff8e8;
+  box-shadow: 0 5px 0 #9c6724, 0 10px 22px #60372644;
+}
+.header-menu aside button {
+  display: flex; min-height: 34px; align-items: center; gap: 7px; padding: 5px 9px;
+  border: 0; border-radius: 9px; background: #ffe064; color: #72451f;
+  font-size: 9px; font-weight: 900; text-transform: uppercase;
+}
+.header-menu aside button span { font-size: 15px; }
+.header-menu aside button:disabled { background: #eadfd6; color: #9d9189; }
 
 .section-heading { display: flex; align-items: center; justify-content: space-between; margin: 0 2px 5px; }
 .section-heading h2 { margin: 0; font-size: 11px; font-weight: 900; letter-spacing: .06em; text-transform: uppercase; }
 .section-heading span { color: #70869a; font-size: 10px; font-weight: 800; }
-.conveyor-section { margin-top: 8px; }
+.conveyor-section { margin: 8px -14px 0; }
+.conveyor-section .section-heading { padding-inline: 16px; }
 .conveyor {
-  position: relative; height: clamp(170px, 25.5vh, 215px); overflow: hidden;
-  border: 2px solid #e6b7b3; border-radius: 22px;
-  background:
-    repeating-linear-gradient(0deg, #ffffff10 0 2px, transparent 2px 5px),
-    radial-gradient(circle at 50% 45%, #fffdf9 0, #fff0e9 68%, #f4d6d2 100%);
-  box-shadow: inset 0 -6px 16px #b76b6b20, inset 0 3px 0 #fff, 0 5px 12px #985f6325;
+  position: relative; height: clamp(185px, 28vh, 235px); overflow: hidden;
+  border: 0; border-radius: 0; background: transparent; box-shadow: none;
 }
 .conveyor svg { display: block; width: 100%; height: calc(100% - 23px); }
 .conveyor-shadow, .conveyor-belt, .conveyor-markings {
