@@ -142,7 +142,7 @@ export function useGame() {
         return { ...current, packages: next.packages, parking: next.parking, conveyorProgress, status };
       });
       setPackageTransfers([]);
-    }, fastFinish ? 340 : 680);
+    }, fastFinish ? 240 : 680);
     return () => window.clearTimeout(timer);
   }, [level.parkingSize, movingTrucks.length, packageTransfers, state.trucks.length]);
 
@@ -151,7 +151,7 @@ export function useGame() {
       setState((current) => {
         if (current.status !== "playing" || current.packages.length === 0) return current;
         const fastFinish = current.trucks.length === 0 && movingTrucks.length === 0;
-        const conveyorSpeed = fastFinish ? 4.25 : 1.25;
+        const conveyorSpeed = fastFinish ? 7 : 1.6;
         const conveyorProgress = Math.min(
           1,
           current.conveyorProgress + (0.1 / level.conveyorSeconds) * conveyorSpeed
