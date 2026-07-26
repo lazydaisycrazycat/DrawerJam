@@ -14,6 +14,11 @@ export function canTruckExit(truck: Truck, allTrucks: Truck[], rows: number, col
   }[truck.direction];
   for (let row = truck.row + dr, col = truck.col + dc; row >= 0 && row < rows && col >= 0 && col < cols; row += dr, col += dc) {
     if (occupied.has(`${row}:${col}`)) return false;
+    if (dr !== 0 && dc !== 0) {
+      const sideAlongRow = `${row}:${col - dc}`;
+      const sideAlongColumn = `${row - dr}:${col}`;
+      if (occupied.has(sideAlongRow) || occupied.has(sideAlongColumn)) return false;
+    }
   }
   return true;
 }
