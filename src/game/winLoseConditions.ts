@@ -2,14 +2,11 @@ import type { GameStatus, PackageItem, ParkingTruck } from "./types";
 
 export function getGameStatus(
   packages: PackageItem[],
-  parking: ParkingTruck[],
-  parkingSize: number,
-  conveyorProgress = 0
+  _parking: ParkingTruck[],
+  _parkingSize: number,
+  _conveyorProgress = 0,
+  overloadHealth = 1
 ): GameStatus {
   if (packages.length === 0) return "won";
-  if (conveyorProgress >= 1) return "lost";
-  if (parking.length < parkingSize) return "playing";
-  return parking.some((truck) =>
-    truck.loaded < truck.capacity && packages.some((item) => item.color === truck.color)
-  ) ? "playing" : "lost";
+  return overloadHealth <= 0 ? "lost" : "playing";
 }

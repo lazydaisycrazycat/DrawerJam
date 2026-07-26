@@ -27,7 +27,7 @@ function pointOnRoute(points: Point[], progress: number): Point {
   return points.at(-1) ?? { x: 0, y: 0 };
 }
 
-export function PackageQueue({ packages, level, progress, transfers, speedBoosted, onToggleSpeed, highlightSpeedBonus }: {
+export function PackageQueue({ packages, level, progress, transfers, speedBoosted, onToggleSpeed, highlightSpeedBonus, overloadHealth, jamGrace, hasRewound }: {
   packages: PackageItem[];
   level: LevelConfig;
   progress: number;
@@ -35,6 +35,9 @@ export function PackageQueue({ packages, level, progress, transfers, speedBooste
   speedBoosted: boolean;
   onToggleSpeed: () => void;
   highlightSpeedBonus?: boolean;
+  overloadHealth: number;
+  jamGrace: number;
+  hasRewound: boolean;
 }) {
   const route = level.conveyorPoints.map(({ x, y }) => `${x},${y}`).join(" ");
   const jamPoint = level.conveyorPoints.at(-1) ?? { x: 342, y: 106 };
@@ -83,10 +86,13 @@ export function PackageQueue({ packages, level, progress, transfers, speedBooste
           <span>»</span>
           {speedBoosted ? "×2" : "×1"}
         </button>
-        <div className="danger-meter">
-          <span>SAFE</span>
-          <i><b style={{ width: `${progress * 100}%` }} /></i>
-          <span>DANGER</span>
+        <div className={`danger-meter${progress >= 1 && hasRewound ? " is-overloading" : ""}`}>
+          <span>{jamGrace > 0 ? `REWIND ${Math.ceil(jamGrace)}` : "OVERLOAD"}</span>
+          <i><b style={{
+            width: `${overloadHealth * 100}%`,
+            background: `hsl(${Math.round(overloadHealth * 120)} 68% 48%)`
+          }} /></i>
+          <span>{Math.ceil(overloadHealth * 100)}%</span>
         </div>
       </div>
     </section>

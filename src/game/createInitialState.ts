@@ -7,6 +7,9 @@ export function createInitialState(level: LevelConfig): GameState {
     parking: [],
     packages: level.packages.map((item) => ({ ...item })),
     conveyorProgress: 0.54,
+    overloadHealth: 1,
+    conveyorRewinds: 0,
+    jamGrace: 0,
     status: "playing"
   };
 }
@@ -17,6 +20,9 @@ export function createSnapshot(state: GameState): GameSnapshot {
     parking: state.parking.map((truck) => ({ ...truck })),
     packages: state.packages.map((item) => ({ ...item })),
     conveyorProgress: state.conveyorProgress,
+    overloadHealth: state.overloadHealth,
+    conveyorRewinds: state.conveyorRewinds,
+    jamGrace: state.jamGrace,
     status: state.status
   };
 }
@@ -28,6 +34,9 @@ export function restoreSnapshot(state: GameState, snapshot: GameSnapshot): GameS
     parking: snapshot.parking.map((truck) => ({ ...truck })),
     packages: snapshot.packages.map((item) => ({ ...item })),
     conveyorProgress: snapshot.conveyorProgress,
+    overloadHealth: snapshot.overloadHealth,
+    conveyorRewinds: snapshot.conveyorRewinds,
+    jamGrace: snapshot.jamGrace,
     status: snapshot.status
   };
 }

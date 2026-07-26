@@ -120,6 +120,9 @@ export default function App() {
         speedBoosted={game.speedBoosted}
         onToggleSpeed={game.toggleSpeed}
         highlightSpeedBonus={game.tutorialStep === "speed"}
+        overloadHealth={game.state.overloadHealth}
+        jamGrace={game.state.jamGrace}
+        hasRewound={game.state.conveyorRewinds > 0}
       />
       <Parking
         trucks={game.state.parking}
@@ -143,7 +146,7 @@ export default function App() {
       {game.state.status !== "playing" && (
         <ResultModal
           status={game.state.status}
-          dangerLoss={game.state.conveyorProgress >= 1}
+          dangerLoss={game.state.overloadHealth <= 0}
           hasNext={game.hasNextLevel}
           onRestart={game.restart}
           onNext={game.nextLevel}

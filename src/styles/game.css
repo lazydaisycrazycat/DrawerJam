@@ -132,6 +132,8 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; }
 .danger-meter span { color: #718896; font-size: 7px; font-weight: 900; }
 .danger-meter i { height: 6px; overflow: hidden; border-radius: 5px; background: #d6e1e6; }
 .danger-meter b { display: block; height: 100%; border-radius: inherit; background: linear-gradient(90deg, #52ba80 0 55%, #f2c94c 75%, #ef5b5b); transition: width .1s linear; }
+.danger-meter.is-overloading { color: #b62d37; animation: overload-pulse .55s ease-in-out infinite alternate; }
+.danger-meter.is-overloading i { box-shadow: 0 0 0 2px #ef5b5b77, 0 0 8px #ef5b5b88; }
 .package-queue {
   display: flex; min-height: 49px; align-items: center; gap: 7px; padding: 7px 9px;
   overflow: hidden; border: 1px solid #ccdae2; border-radius: 16px; background: #fff;
@@ -245,12 +247,6 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; }
 .truck__cargo { position: absolute; left: 8%; top: 9%; display: grid; width: 18px; height: 18px; place-items: center; border: 2px solid #fff8; border-radius: 50%; background: #0002; font-size: clamp(7px, 2vw, 10px); }
 .truck__arrow { position: absolute; z-index: 2; right: 26%; top: 50%; color: #fff; font-size: clamp(17px, 4.7vw, 25px); font-weight: 900; line-height: 1; transform: translateY(-50%); text-shadow: -1px -1px 0 #603543, 1px -1px 0 #603543, -1px 1px 0 #603543, 1px 1px 0 #603543, 0 2px 0 #603543; }
 .truck__cab { position: absolute; right: -2px; top: 13%; width: 27%; height: 74%; border: 2px solid var(--package-dark); border-radius: 3px 7px 7px 3px; background: linear-gradient(135deg, #fff8, #ffffff26); }
-.truck__capacity {
-  position: absolute; right: 4%; top: -9px; z-index: 3; display: grid; min-width: 18px; height: 18px;
-  padding-inline: 3px; place-items: center; border: 2px solid #fff; border-radius: 10px;
-  background: var(--package-dark); box-shadow: 0 2px 0 #55202d66;
-  color: #fff; font-size: 8px; font-weight: 900; line-height: 1;
-}
 .truck__wheel { position: absolute; width: 12%; aspect-ratio: 1; border: 2px solid #22303d; border-radius: 50%; background: #788690; }
 .truck__wheel--one { left: 18%; bottom: -8%; } .truck__wheel--two { right: 17%; bottom: -8%; }
 .truck--right { --truck-angle: 0deg; }
@@ -344,6 +340,7 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; }
 @keyframes belt-flow { to { stroke-dashoffset: -22; } }
 @keyframes first-package { to { filter: drop-shadow(0 0 7px #ef5b5b); } }
 @keyframes danger-pulse { to { box-shadow: inset 0 0 20px #ef5b5b2e, 0 0 0 2px #ef5b5b55; } }
+@keyframes overload-pulse { to { filter: brightness(1.2); transform: scaleY(1.12); } }
 @keyframes tutorial-pulse {
   from {
     outline-color: #fff8b5;

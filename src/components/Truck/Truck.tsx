@@ -29,7 +29,6 @@ export function Truck({ truck, blocked, moving, highlighted, onClick }: FieldPro
     >
       <span className="truck__cargo">{colorSymbols[truck.color]}</span>
       <span className="truck__arrow">→</span>
-      <span className="truck__capacity">{truck.capacity}</span>
       <i className="truck__cab" />
       <i className="truck__wheel truck__wheel--one" />
       <i className="truck__wheel truck__wheel--two" />

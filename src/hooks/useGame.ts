@@ -138,7 +138,13 @@ export function useGame() {
           0.12,
           current.conveyorProgress - CONVEYOR_PACKAGE_SPACING * next.loaded
         );
-        const status = getGameStatus(next.packages, next.parking, level.parkingSize, conveyorProgress);
+        const status = getGameStatus(
+          next.packages,
+          next.parking,
+          level.parkingSize,
+          conveyorProgress,
+          current.overloadHealth
+        );
         return { ...current, packages: next.packages, parking: next.parking, conveyorProgress, status };
       });
       setPackageTransfers([]);
@@ -150,14 +156,33 @@ export function useGame() {
     const interval = window.setInterval(() => {
       setState((current) => {
         if (current.status !== "playing" || current.packages.length === 0) return current;
+        if (current.jamGrace > 0) {
+          const jamGrace = Math.max(0, current.jamGrace - 0.1);
+          return jamGrace === 0
+            ? { ...current, jamGrace, conveyorProgress: 0.05, conveyorRewinds: 1 }
+            : { ...current, jamGrace };
+        }
         const fastFinish = current.trucks.length === 0 && movingTrucks.length === 0;
         const conveyorSpeed = (fastFinish ? 12 : 3.4) * (speedBoosted ? 2 : 1);
         const conveyorProgress = Math.min(
           1,
           current.conveyorProgress + (0.1 / level.conveyorSeconds) * conveyorSpeed
         );
-        const status = getGameStatus(current.packages, current.parking, level.parkingSize, conveyorProgress);
-        return { ...current, conveyorProgress, status };
+        if (conveyorProgress >= 1 && current.conveyorRewinds === 0) {
+          return { ...current, conveyorProgress: 1, jamGrace: 3 };
+        }
+        const isOverloading = conveyorProgress >= 1 && current.conveyorRewinds > 0;
+        const overloadHealth = isOverloading
+          ? Math.max(0, current.overloadHealth - 0.012)
+          : Math.min(1, current.overloadHealth + 0.004);
+        const status = getGameStatus(
+          current.packages,
+          current.parking,
+          level.parkingSize,
+          conveyorProgress,
+          overloadHealth
+        );
+        return { ...current, conveyorProgress, overloadHealth, status };
       });
     }, 100);
     return () => window.clearInterval(interval);
