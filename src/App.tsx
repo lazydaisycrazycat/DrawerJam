@@ -1,4 +1,3 @@
-import { Controls } from "./components/Controls/Controls";
 import { GameBoard } from "./components/GameBoard/GameBoard";
 import { GameHeader } from "./components/GameHeader/GameHeader";
 import { PackageQueue } from "./components/PackageQueue/PackageQueue";
@@ -112,7 +111,7 @@ export default function App() {
   }
   return (
     <main className={`app-shell${game.fastFinish ? " is-fast-finish" : ""}`}>
-      <GameHeader level={game.level.id} onPrevious={game.previousLevel} />
+      <GameHeader level={game.level.id} onPrevious={game.previousLevel} onRestart={game.restart} />
       <PackageQueue
         packages={game.state.packages}
         level={game.level}
@@ -140,7 +139,6 @@ export default function App() {
       <p className={`hint${game.isProcessing ? " is-loading" : ""}`}>
         {game.isProcessing ? "Loading matching packages…" : "Tap a truck with a clear path to its arrow"}
       </p>
-      <Controls onRestart={game.restart} />
       <BonusBar />
       {game.state.status !== "playing" && (
         <ResultModal
