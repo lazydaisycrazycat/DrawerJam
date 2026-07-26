@@ -1,9 +1,8 @@
 import { useCallback, useEffect, useState } from "react";
-import { createInitialState, createSnapshot, restoreSnapshot } from "../game/createInitialState";
+import { createInitialState } from "../game/createInitialState";
 import { levels } from "../game/levels";
 import { addTruckToParking, canTruckExit, hasParkingSpace, removeTruckFromField } from "../game/movement";
-import { canProcessNextPackage, processNextPackage } from "../game/packageProcessing";
-import type { GameSnapshot } from "../game/types";
+import { canProcessNextPackage, processPackageWave } from "../game/packageProcessing";
 import { getGameStatus } from "../game/winLoseConditions";
 import { useTelegram } from "./useTelegram";
 
@@ -34,7 +33,6 @@ export function useGame() {
   });
   const level = levels[levelIndex];
   const [state, setState] = useState(() => createInitialState(level));
-  const [history, setHistory] = useState<GameSnapshot[]>([]);
   const [feedback, setFeedback] = useState<Feedback>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const telegram = useTelegram();
@@ -58,7 +56,6 @@ export function useGame() {
       telegram.error();
       return;
     }
-    setHistory((items) => [...items, createSnapshot(state)]);
     const trucks = removeTruckFromField(state.trucks, truck.id);
     const addedParking = addTruckToParking(state.parking, truck);
     setState({ ...state, trucks, parking: addedParking, status: "playing" });
@@ -75,8 +72,8 @@ export function useGame() {
     const timer = window.setTimeout(() => {
       setState((current) => {
         if (current.status !== "playing" || !canProcessNextPackage(current.packages, current.parking)) return current;
-        const next = processNextPackage(current.packages, current.parking);
-        const conveyorProgress = Math.max(0.12, current.conveyorProgress - packageSpacing);
+        const next = processPackageWave(current.packages, current.parking);
+        const conveyorProgress = Math.max(0.12, current.conveyorProgress - packageSpacing * next.loaded);
         const status = getGameStatus(next.packages, next.parking, level.parkingSize, conveyorProgress);
         return { ...current, packages: next.packages, parking: next.parking, conveyorProgress, status };
       });
@@ -110,18 +107,9 @@ export function useGame() {
 
   const restart = useCallback(() => {
     setState(createInitialState(level));
-    setHistory([]);
     setFeedback(null);
     setIsProcessing(false);
   }, [level]);
-
-  const undo = useCallback(() => {
-    const snapshot = history.at(-1);
-    if (!snapshot) return;
-    setState((current) => restoreSnapshot(current, snapshot));
-    setHistory((items) => items.slice(0, -1));
-    setIsProcessing(false);
-  }, [history]);
 
   const openLevel = useCallback((index: number) => {
     const safeIndex = Math.min(Math.max(index, 0), levels.length - 1);
@@ -130,14 +118,13 @@ export function useGame() {
 
   useEffect(() => {
     setState(createInitialState(level));
-    setHistory([]);
     setFeedback(null);
     setIsProcessing(false);
   }, [level]);
 
   return {
-    level, levelIndex, state, feedback, isProcessing, canUndo: history.length > 0 && !isProcessing,
-    selectTruck, restart, undo,
+    level, levelIndex, state, feedback, isProcessing,
+    selectTruck, restart,
     nextLevel: () => openLevel(levelIndex + 1),
     previousLevel: () => openLevel(levelIndex - 1),
     hasNextLevel: levelIndex < levels.length - 1
