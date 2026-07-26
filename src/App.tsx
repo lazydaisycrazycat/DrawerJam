@@ -28,6 +28,16 @@ export default function App() {
       "down-left": [-Math.SQRT1_2, Math.SQRT1_2],
       "down-right": [Math.SQRT1_2, Math.SQRT1_2]
     } as const;
+    const directionAngles = {
+      right: 0, "down-right": 45, down: 90, "down-left": 135,
+      left: 180, "up-left": -135, up: -90, "up-right": -45
+    } as const;
+    const nearestAngle = (target: number, previous: number) => {
+      const alternatives = [target - 360, target, target + 360];
+      return alternatives.reduce((nearest, angle) =>
+        Math.abs(angle - previous) < Math.abs(nearest - previous) ? angle : nearest
+      );
+    };
     const [dx, dy] = vectors[movement.direction];
     const distances = [
       dx > 0 ? (field.right + 32 - startX) / dx : dx < 0 ? (field.left - 32 - startX) / dx : Infinity,
@@ -43,6 +53,10 @@ export default function App() {
     const cornerY = field.top + 42;
     const targetX = to.left + to.width / 2;
     const targetY = to.top + to.height / 2;
+    const startAngle = directionAngles[movement.direction];
+    const cornerAngle = nearestAngle(-90, startAngle);
+    const routeAngle = nearestAngle(useLeftSide ? 0 : 180, cornerAngle);
+    const approachAngle = nearestAngle(-90, routeAngle);
 
     element.style.setProperty("--exit-x", `${exitX - startX}px`);
     element.style.setProperty("--exit-y", `${exitY - startY}px`);
@@ -50,7 +64,9 @@ export default function App() {
     element.style.setProperty("--corner-y", `${cornerY - startY}px`);
     element.style.setProperty("--staging-x", `${targetX - startX}px`);
     element.style.setProperty("--staging-y", `${cornerY - startY}px`);
-    element.style.setProperty("--route-angle", useLeftSide ? "0deg" : "180deg");
+    element.style.setProperty("--corner-angle", `${cornerAngle}deg`);
+    element.style.setProperty("--route-angle", `${routeAngle}deg`);
+    element.style.setProperty("--approach-angle", `${approachAngle}deg`);
     element.style.setProperty("--approach-x", `${targetX - startX}px`);
     element.style.setProperty("--approach-y", `${to.bottom + 28 - startY}px`);
     element.style.setProperty("--travel-x", `${targetX - startX}px`);
