@@ -104,37 +104,37 @@ const level5Trucks = [
 export const levels: LevelConfig[] = [
   {
     id: 0, tutorial: true, rows: 5, cols: 5, parkingSize: 2, truckCapacity: 3, conveyorSeconds: 80,
-    conveyorPoints: [{ x: -48, y: 165 }, { x: 92, y: 165 }, { x: 92, y: 52 }, { x: 268, y: 52 }, { x: 268, y: 150 }, { x: 342, y: 150 }],
+    conveyorPoints: [{ x: -180, y: 165 }, { x: 92, y: 165 }, { x: 92, y: 52 }, { x: 268, y: 52 }, { x: 268, y: 150 }, { x: 342, y: 150 }],
     trucks: tutorialTrucks,
     packages: packagesFor(tutorialTrucks, ["red", "red", "red", "blue", "blue"])
   },
   {
     id: 1, rows: 5, cols: 5, parkingSize: 3, truckCapacity: 3, conveyorSeconds: 45,
-    conveyorPoints: [{ x: -55, y: 165 }, { x: 92, y: 165 }, { x: 92, y: 52 }, { x: 268, y: 52 }, { x: 268, y: 150 }, { x: 342, y: 150 }],
+    conveyorPoints: [{ x: -180, y: 165 }, { x: 92, y: 165 }, { x: 92, y: 52 }, { x: 268, y: 52 }, { x: 268, y: 150 }, { x: 342, y: 150 }],
     trucks: level1Trucks,
     packages: packagesFor(level1Trucks, ["red", "red", "blue", "green", "blue", "yellow"])
   },
   {
     id: 2, rows: 5, cols: 5, parkingSize: 3, truckCapacity: 3, conveyorSeconds: 48,
-    conveyorPoints: [{ x: 410, y: 170 }, { x: 292, y: 170 }, { x: 292, y: 55 }, { x: 178, y: 55 }, { x: 178, y: 150 }, { x: 68, y: 150 }, { x: 68, y: 42 }, { x: 18, y: 42 }],
+    conveyorPoints: [{ x: 540, y: 170 }, { x: 292, y: 170 }, { x: 292, y: 55 }, { x: 178, y: 55 }, { x: 178, y: 150 }, { x: 68, y: 150 }, { x: 68, y: 42 }, { x: 18, y: 42 }],
     trucks: level2Trucks,
     packages: packagesFor(level2Trucks, ["green", "red", "red", "blue", "yellow", "green", "blue"])
   },
   {
     id: 3, rows: 5, cols: 5, parkingSize: 4, truckCapacity: 3, conveyorSeconds: 52,
-    conveyorPoints: [{ x: 52, y: -55 }, { x: 58, y: 45 }, { x: 132, y: 45 }, { x: 168, y: 112 }, { x: 210, y: 175 }, { x: 292, y: 175 }, { x: 342, y: 105 }],
+    conveyorPoints: [{ x: 52, y: -180 }, { x: 58, y: 45 }, { x: 132, y: 45 }, { x: 168, y: 112 }, { x: 210, y: 175 }, { x: 292, y: 175 }, { x: 342, y: 105 }],
     trucks: level3Trucks,
     packages: packagesFor(level3Trucks, ["yellow", "green", "green", "red", "blue", "yellow", "red", "blue"])
   },
   {
     id: 4, rows: 6, cols: 6, parkingSize: 4, truckCapacity: 3, conveyorSeconds: 56,
-    conveyorPoints: [{ x: 85, y: 265 }, { x: 85, y: 170 }, { x: 85, y: 42 }, { x: 275, y: 42 }, { x: 275, y: 170 }, { x: 190, y: 170 }, { x: 190, y: 100 }, { x: 342, y: 100 }],
+    conveyorPoints: [{ x: 85, y: 390 }, { x: 85, y: 170 }, { x: 85, y: 42 }, { x: 275, y: 42 }, { x: 275, y: 170 }, { x: 190, y: 170 }, { x: 190, y: 100 }, { x: 342, y: 100 }],
     trucks: level4Trucks,
     packages: packagesFor(level4Trucks, ["blue", "blue", "red", "yellow", "green", "red", "green", "yellow"])
   },
   {
     id: 5, rows: 6, cols: 6, parkingSize: 4, truckCapacity: 3, conveyorSeconds: 62,
-    conveyorPoints: [{ x: -60, y: 108 }, { x: 62, y: 168 }, { x: 62, y: 45 }, { x: 150, y: 45 }, { x: 150, y: 170 }, { x: 238, y: 170 }, { x: 238, y: 45 }, { x: 305, y: 45 }, { x: 342, y: 108 }],
+    conveyorPoints: [{ x: -190, y: 45 }, { x: 62, y: 168 }, { x: 62, y: 45 }, { x: 150, y: 45 }, { x: 150, y: 170 }, { x: 238, y: 170 }, { x: 238, y: 45 }, { x: 305, y: 45 }, { x: 342, y: 108 }],
     trucks: level5Trucks,
     packages: packagesFor(level5Trucks, ["green", "yellow", "yellow", "red", "blue", "green", "red", "yellow", "blue"])
   }

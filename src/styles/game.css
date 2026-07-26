@@ -101,8 +101,8 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; }
 .conveyor--danger { animation: danger-pulse .7s ease-in-out infinite alternate; }
 .conveyor--danger .jam-zone circle { animation: first-package .45s ease-in-out infinite alternate; }
 .conveyor-fog {
-  fill: none; stroke: #fffdf8; stroke-width: 42; stroke-linecap: round;
-  stroke-dasharray: .22 .78; opacity: .72; filter: blur(7px);
+  fill: none; stroke: #fffdf8; stroke-width: 28; stroke-linecap: butt;
+  stroke-dasharray: .22 .78; opacity: .24; filter: blur(9px);
   transition: opacity .3s ease;
 }
 .conveyor--fog-cleared .conveyor-fog { opacity: 0; }
