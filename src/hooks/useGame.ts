@@ -17,6 +17,7 @@ import type { TutorialStep } from "../components/TutorialHint/TutorialHint";
 type Feedback = { kind: "truck" | "parking"; id: string } | null;
 type MovingTruck = { id: string; slotIndex: number };
 const storageKey = "parcel-jam-progress";
+const TRUCK_TRAVEL_MS = 1120;
 
 function readUnlockedLevel(): number {
   try {
@@ -101,7 +102,7 @@ export function useGame() {
         };
       });
       setMovingTrucks((items) => items.filter((item) => item.id !== truck.id));
-    }, 1320);
+    }, TRUCK_TRAVEL_MS);
     return { slotIndex, direction: truck.direction };
   }, [flash, level, movingTrucks, state, telegram]);
 
@@ -128,6 +129,7 @@ export function useGame() {
 
   useEffect(() => {
     if (!packageTransfers.length) return;
+    const fastFinish = state.trucks.length === 0 && movingTrucks.length === 0;
     const timer = window.setTimeout(() => {
       setState((current) => {
         if (current.status !== "playing") return current;
@@ -140,21 +142,26 @@ export function useGame() {
         return { ...current, packages: next.packages, parking: next.parking, conveyorProgress, status };
       });
       setPackageTransfers([]);
-    }, 680);
+    }, fastFinish ? 340 : 680);
     return () => window.clearTimeout(timer);
-  }, [level.parkingSize, packageTransfers]);
+  }, [level.parkingSize, movingTrucks.length, packageTransfers, state.trucks.length]);
 
   useEffect(() => {
     const interval = window.setInterval(() => {
       setState((current) => {
         if (current.status !== "playing" || current.packages.length === 0) return current;
-        const conveyorProgress = Math.min(1, current.conveyorProgress + 0.1 / level.conveyorSeconds);
+        const fastFinish = current.trucks.length === 0 && movingTrucks.length === 0;
+        const conveyorSpeed = fastFinish ? 3.5 : 1;
+        const conveyorProgress = Math.min(
+          1,
+          current.conveyorProgress + (0.1 / level.conveyorSeconds) * conveyorSpeed
+        );
         const status = getGameStatus(current.packages, current.parking, level.parkingSize, conveyorProgress);
         return { ...current, conveyorProgress, status };
       });
     }, 100);
     return () => window.clearInterval(interval);
-  }, [level.conveyorSeconds, level.parkingSize]);
+  }, [level.conveyorSeconds, level.parkingSize, movingTrucks.length]);
 
   useEffect(() => {
     if (state.status === "lost") {
@@ -208,6 +215,7 @@ export function useGame() {
     isProcessing,
     movingTruckIds: movingTrucks.map((item) => item.id),
     packageTransfers,
+    fastFinish: state.trucks.length === 0 && movingTrucks.length === 0,
     tutorialTargetTruckId: level.tutorial ? state.trucks[0]?.id : undefined,
     tutorialStep,
     fogCleared,
