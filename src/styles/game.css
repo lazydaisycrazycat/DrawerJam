@@ -74,6 +74,7 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; }
 .conveyor-markings { stroke: #ffb8df; stroke-width: 16; stroke-dasharray: 2 7; animation: belt-flow .8s linear infinite; }
 .moving-package { transition: transform .1s linear, opacity .16s; filter: drop-shadow(0 3px 1px #30475445); }
 .moving-package.is-loading { opacity: .16; }
+.moving-package.is-fogged { opacity: .55; filter: blur(.35px) saturate(.72) drop-shadow(0 3px 1px #30475430); }
 .moving-package rect { fill: var(--package-color); stroke: var(--package-dark); stroke-width: 3; }
 .moving-package path { fill: none; stroke: #ffffffa0; stroke-width: 4; }
 .moving-package text { fill: #fff; font-size: 8px; font-weight: 900; text-anchor: middle; filter: drop-shadow(0 1px #0005); }
@@ -89,6 +90,21 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; }
 .jam-zone text { fill: #9e3440; font-size: 8px; font-weight: 900; text-anchor: middle; }
 .conveyor--danger { animation: danger-pulse .7s ease-in-out infinite alternate; }
 .conveyor--danger .jam-zone circle { animation: first-package .45s ease-in-out infinite alternate; }
+.conveyor-fog {
+  fill: none; stroke: #fffdf8; stroke-width: 42; stroke-linecap: round;
+  stroke-dasharray: .22 .78; opacity: .72; filter: blur(7px);
+  transition: opacity .3s ease;
+}
+.conveyor--fog-cleared .conveyor-fog { opacity: 0; }
+.conveyor--fog-cleared .moving-package.is-fogged { opacity: 1; filter: drop-shadow(0 3px 1px #30475445); }
+.fog-bonus {
+  position: absolute; z-index: 4; top: 7px; right: 8px; display: grid; min-width: 48px;
+  padding: 5px 8px; border: 2px solid #1766ae; border-radius: 12px;
+  background: linear-gradient(#9eeeff, #3ba9ed); box-shadow: inset 0 2px 0 #fff9, 0 3px 0 #15578e;
+  color: #fff; font-size: 7px; font-weight: 900; line-height: 1; text-transform: uppercase;
+}
+.fog-bonus span { margin-bottom: 3px; font-size: 9px; }
+.fog-bonus:disabled { background: linear-gradient(#c9fff4, #5edbb9); border-color: #24896d; box-shadow: inset 0 2px 0 #fff9, 0 3px 0 #1a7158; opacity: 1; }
 .danger-meter { position: absolute; right: 10px; bottom: 7px; left: 10px; display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 6px; }
 .danger-meter span { color: #718896; font-size: 7px; font-weight: 900; }
 .danger-meter i { height: 6px; overflow: hidden; border-radius: 5px; background: #d6e1e6; }

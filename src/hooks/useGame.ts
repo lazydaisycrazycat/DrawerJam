@@ -44,8 +44,9 @@ export function useGame() {
   const [isProcessing, setIsProcessing] = useState(false);
   const [movingTrucks, setMovingTrucks] = useState<MovingTruck[]>([]);
   const [packageTransfers, setPackageTransfers] = useState<PackageTransfer[]>([]);
+  const [fogCleared, setFogCleared] = useState(false);
   const telegram = useTelegram();
-  const visiblePackageCount = getVisiblePackageCount(state.packages, state.conveyorProgress);
+  const visiblePackageCount = getVisiblePackageCount(state.packages, state.conveyorProgress, fogCleared);
 
   const flash = useCallback((next: Feedback) => {
     setFeedback(next);
@@ -161,6 +162,7 @@ export function useGame() {
     setIsProcessing(false);
     setMovingTrucks([]);
     setPackageTransfers([]);
+    setFogCleared(false);
   }, [level]);
 
   const openLevel = useCallback((index: number) => {
@@ -168,12 +170,20 @@ export function useGame() {
     setLevelIndex(safeIndex);
   }, []);
 
+  const clearFog = useCallback(() => {
+    if (fogCleared || state.status !== "playing") return;
+    setFogCleared(true);
+    telegram.impact();
+    window.setTimeout(() => setFogCleared(false), 5000);
+  }, [fogCleared, state.status, telegram]);
+
   useEffect(() => {
     setState(createInitialState(level));
     setFeedback(null);
     setIsProcessing(false);
     setMovingTrucks([]);
     setPackageTransfers([]);
+    setFogCleared(false);
   }, [level]);
 
   return {
@@ -184,6 +194,8 @@ export function useGame() {
     isProcessing,
     movingTruckIds: movingTrucks.map((item) => item.id),
     packageTransfers,
+    fogCleared,
+    clearFog,
     selectTruck, restart,
     nextLevel: () => openLevel(levelIndex + 1),
     previousLevel: () => openLevel(levelIndex - 1),

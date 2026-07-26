@@ -46,16 +46,22 @@ export default function App() {
     const exitDistance = Math.min(...distances);
     const exitX = startX + dx * exitDistance;
     const exitY = startY + dy * exitDistance;
-    const useLeftSide = exitX <= field.left || (
-      exitX < field.right && Math.abs(exitX - field.left) < Math.abs(exitX - field.right)
-    );
-    const sideX = useLeftSide ? field.left - 34 : field.right + 34;
-    const cornerY = field.top + 42;
     const targetX = to.left + to.width / 2;
     const targetY = to.top + to.height / 2;
     const startAngle = directionAngles[movement.direction];
-    const cornerAngle = nearestAngle(-90, startAngle);
-    const routeAngle = nearestAngle(useLeftSide ? 0 : 180, cornerAngle);
+    const approachY = Math.min(to.bottom + 18, field.top - 4);
+    const exitedThroughTop = exitY <= field.top - 20;
+    const useLeftSide = exitX <= field.left || (
+      exitX < field.right && Math.abs(exitX - field.left) < Math.abs(exitX - field.right)
+    );
+    const sideX = exitedThroughTop ? targetX : useLeftSide ? field.left - 34 : field.right + 34;
+    const cornerY = Math.min(field.top - 10, to.bottom + 20);
+    const cornerAngle = exitedThroughTop
+      ? nearestAngle(targetX >= exitX ? 0 : 180, startAngle)
+      : nearestAngle(-90, startAngle);
+    const routeAngle = exitedThroughTop
+      ? cornerAngle
+      : nearestAngle(useLeftSide ? 0 : 180, cornerAngle);
     const approachAngle = nearestAngle(-90, routeAngle);
 
     element.style.setProperty("--exit-x", `${exitX - startX}px`);
@@ -68,18 +74,21 @@ export default function App() {
     element.style.setProperty("--route-angle", `${routeAngle}deg`);
     element.style.setProperty("--approach-angle", `${approachAngle}deg`);
     element.style.setProperty("--approach-x", `${targetX - startX}px`);
-    element.style.setProperty("--approach-y", `${to.bottom + 28 - startY}px`);
+    element.style.setProperty("--approach-y", `${approachY - startY}px`);
     element.style.setProperty("--travel-x", `${targetX - startX}px`);
     element.style.setProperty("--travel-y", `${targetY - startY}px`);
 
-    const route = [
+    const rawRoute = [
       { x: 0, y: 0, angle: startAngle, scale: 1 },
       { x: exitX - startX, y: exitY - startY, angle: startAngle, scale: 1 },
       { x: sideX - startX, y: cornerY - startY, angle: cornerAngle, scale: 0.94 },
       { x: targetX - startX, y: cornerY - startY, angle: routeAngle, scale: 0.9 },
-      { x: targetX - startX, y: to.bottom + 28 - startY, angle: approachAngle, scale: 0.86 },
+      { x: targetX - startX, y: approachY - startY, angle: approachAngle, scale: 0.86 },
       { x: targetX - startX, y: targetY - startY, angle: approachAngle, scale: 0.78 }
     ];
+    const route = rawRoute.filter((point, index, points) =>
+      index === 0 || Math.hypot(point.x - points[index - 1].x, point.y - points[index - 1].y) > 0.5
+    );
     const segmentLengths = route.slice(1).map((point, index) =>
       Math.hypot(point.x - route[index].x, point.y - route[index].y)
     );
@@ -107,6 +116,8 @@ export default function App() {
         level={game.level}
         progress={game.state.conveyorProgress}
         transfers={game.packageTransfers}
+        fogCleared={game.fogCleared}
+        onClearFog={game.clearFog}
       />
       <Parking
         trucks={game.state.parking}
