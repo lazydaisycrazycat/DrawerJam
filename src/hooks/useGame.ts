@@ -12,6 +12,7 @@ import {
 } from "../game/packageProcessing";
 import { getGameStatus } from "../game/winLoseConditions";
 import { useTelegram } from "./useTelegram";
+import type { TutorialStep } from "../components/TutorialHint/TutorialHint";
 
 type Feedback = { kind: "truck" | "parking"; id: string } | null;
 type MovingTruck = { id: string; slotIndex: number };
@@ -47,6 +48,14 @@ export function useGame() {
   const [fogCleared, setFogCleared] = useState(false);
   const telegram = useTelegram();
   const visiblePackageCount = getVisiblePackageCount(state.packages, state.conveyorProgress, fogCleared);
+  const tutorialStep: TutorialStep | null = level.tutorial
+    ? state.trucks.some((truck) => truck.id === "tutorial-red")
+      ? movingTrucks.some((truck) => truck.id === "tutorial-red") ? "driving" : "red"
+      : state.parking.some((truck) => truck.truckId === "tutorial-red") ? "loading"
+      : state.trucks.some((truck) => truck.id === "tutorial-blue")
+        ? movingTrucks.some((truck) => truck.id === "tutorial-blue") ? "driving" : "blue"
+        : state.packages.length && !fogCleared ? "fog" : "loading"
+    : null;
 
   const flash = useCallback((next: Feedback) => {
     setFeedback(next);
@@ -200,14 +209,7 @@ export function useGame() {
     movingTruckIds: movingTrucks.map((item) => item.id),
     packageTransfers,
     tutorialTargetTruckId: level.tutorial ? state.trucks[0]?.id : undefined,
-    tutorialStep: level.tutorial
-      ? state.trucks.some((truck) => truck.id === "tutorial-red")
-        ? movingTrucks.some((truck) => truck.id === "tutorial-red") ? "driving" : "red"
-        : state.parking.some((truck) => truck.truckId === "tutorial-red") ? "loading"
-        : state.trucks.some((truck) => truck.id === "tutorial-blue")
-          ? movingTrucks.some((truck) => truck.id === "tutorial-blue") ? "driving" : "blue"
-          : state.packages.length && !fogCleared ? "fog" : "loading"
-      : null,
+    tutorialStep,
     fogCleared,
     clearFog,
     selectTruck, restart,
