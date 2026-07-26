@@ -130,18 +130,20 @@ export default function App() {
         fullFeedback={game.feedback?.kind === "parking"}
       />
       <PackageTransferLayer transfers={game.packageTransfers} />
-      <GameBoard
-        level={game.level}
-        trucks={game.state.trucks}
-        movingTruckIds={game.movingTruckIds}
-        highlightedTruckId={game.tutorialTargetTruckId}
-        blockedTruckId={game.feedback?.kind === "truck" ? game.feedback.id : undefined}
-        onTruckClick={handleTruckClick}
-      />
-      {game.tutorialStep && <TutorialHint step={game.tutorialStep} />}
-      <p className={`hint${game.isProcessing ? " is-loading" : ""}`}>
-        {game.isProcessing ? "Loading matching packages…" : "Tap a truck with a clear path to its arrow"}
-      </p>
+      <section className={`play-area${game.tutorialStep ? " has-tutorial" : ""}`}>
+        <GameBoard
+          level={game.level}
+          trucks={game.state.trucks}
+          movingTruckIds={game.movingTruckIds}
+          highlightedTruckId={game.tutorialTargetTruckId}
+          blockedTruckId={game.feedback?.kind === "truck" ? game.feedback.id : undefined}
+          onTruckClick={handleTruckClick}
+        />
+        {game.tutorialStep && <TutorialHint step={game.tutorialStep} />}
+        <p className={`hint${game.isProcessing ? " is-loading" : ""}`}>
+          {game.isProcessing ? "Loading matching packages…" : "Tap a truck with a clear path to its arrow"}
+        </p>
+      </section>
       <BonusBar />
       {game.state.status !== "playing" && (
         <ResultModal
