@@ -5,10 +5,11 @@ type Props = {
   level: LevelConfig;
   trucks: TruckType[];
   blockedTruckId?: string;
+  movingTruckIds: string[];
   onTruckClick: (id: string) => void;
 };
 
-export function GameBoard({ level, trucks, blockedTruckId, onTruckClick }: Props) {
+export function GameBoard({ level, trucks, blockedTruckId, movingTruckIds, onTruckClick }: Props) {
   return (
     <section className="board-wrap" aria-label="Truck yard">
       <div className="road road--top" /><div className="road road--right" />
@@ -16,7 +17,13 @@ export function GameBoard({ level, trucks, blockedTruckId, onTruckClick }: Props
       <div className="game-board" style={{ gridTemplateColumns: `repeat(${level.cols}, 1fr)`, gridTemplateRows: `repeat(${level.rows}, 1fr)` }}>
         {Array.from({ length: level.rows * level.cols }, (_, index) => <i className="grid-cell" key={index} />)}
         {trucks.map((truck) => (
-          <Truck key={truck.id} truck={truck} blocked={blockedTruckId === truck.id} onClick={() => onTruckClick(truck.id)} />
+          <Truck
+            key={truck.id}
+            truck={truck}
+            blocked={blockedTruckId === truck.id}
+            moving={movingTruckIds.includes(truck.id)}
+            onClick={() => onTruckClick(truck.id)}
+          />
         ))}
       </div>
     </section>

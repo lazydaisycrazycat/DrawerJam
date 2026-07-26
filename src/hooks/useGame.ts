@@ -3,9 +3,11 @@ import { createInitialState } from "../game/createInitialState";
 import { levels } from "../game/levels";
 import { addTruckToParking, canTruckExit, hasParkingSpace, removeTruckFromField } from "../game/movement";
 import {
+  applyPackageTransfers,
   canProcessNextPackage,
   CONVEYOR_PACKAGE_SPACING,
   getVisiblePackageCount,
+  type PackageTransfer,
   processPackageWave
 } from "../game/packageProcessing";
 import { getGameStatus } from "../game/winLoseConditions";
@@ -39,36 +41,48 @@ export function useGame() {
   const [state, setState] = useState(() => createInitialState(level));
   const [feedback, setFeedback] = useState<Feedback>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [movingTruckIds, setMovingTruckIds] = useState<string[]>([]);
+  const [packageTransfers, setPackageTransfers] = useState<PackageTransfer[]>([]);
   const telegram = useTelegram();
   const visiblePackageCount = getVisiblePackageCount(state.packages, state.conveyorProgress);
 
   const flash = useCallback((next: Feedback) => {
     setFeedback(next);
-    window.setTimeout(() => setFeedback(null), 320);
+    window.setTimeout(() => setFeedback(null), 520);
   }, []);
 
   const selectTruck = useCallback((truckId: string) => {
     if (state.status !== "playing") return;
     const truck = state.trucks.find((item) => item.id === truckId);
-    if (!truck) return;
+    if (!truck || movingTruckIds.includes(truckId)) return;
     if (!canTruckExit(truck, state.trucks, level.rows, level.cols)) {
       flash({ kind: "truck", id: truckId });
       telegram.error();
       return;
     }
-    if (!hasParkingSpace(state.parking, level)) {
+    if (state.parking.length + movingTruckIds.length >= level.parkingSize) {
       flash({ kind: "parking", id: "parking" });
       telegram.error();
       return;
     }
-    const trucks = removeTruckFromField(state.trucks, truck.id);
-    const addedParking = addTruckToParking(state.parking, truck);
-    setState({ ...state, trucks, parking: addedParking, status: "playing" });
-    if (canProcessNextPackage(state.packages, addedParking, visiblePackageCount)) setIsProcessing(true);
+    setMovingTruckIds((items) => [...items, truck.id]);
     telegram.impact();
-  }, [flash, level, state, telegram, visiblePackageCount]);
+    window.setTimeout(() => {
+      setState((current) => {
+        const currentTruck = current.trucks.find((item) => item.id === truck.id);
+        if (!currentTruck || current.status !== "playing" || !hasParkingSpace(current.parking, level)) return current;
+        return {
+          ...current,
+          trucks: removeTruckFromField(current.trucks, currentTruck.id),
+          parking: addTruckToParking(current.parking, currentTruck)
+        };
+      });
+      setMovingTruckIds((items) => items.filter((id) => id !== truck.id));
+    }, 430);
+  }, [flash, level, movingTruckIds, state, telegram]);
 
   useEffect(() => {
+    if (packageTransfers.length) return;
     if (
       state.status !== "playing" ||
       !canProcessNextPackage(state.packages, state.parking, visiblePackageCount)
@@ -77,14 +91,23 @@ export function useGame() {
       return;
     }
     setIsProcessing(true);
+    const wave = processPackageWave(state.packages, state.parking, visiblePackageCount);
+    setPackageTransfers(wave.transfers);
+  }, [
+    level.parkingSize,
+    packageTransfers.length,
+    state.packages,
+    state.parking,
+    state.status,
+    visiblePackageCount
+  ]);
+
+  useEffect(() => {
+    if (!packageTransfers.length) return;
     const timer = window.setTimeout(() => {
       setState((current) => {
-        const currentVisibleCount = getVisiblePackageCount(current.packages, current.conveyorProgress);
-        if (
-          current.status !== "playing" ||
-          !canProcessNextPackage(current.packages, current.parking, currentVisibleCount)
-        ) return current;
-        const next = processPackageWave(current.packages, current.parking, currentVisibleCount);
+        if (current.status !== "playing") return current;
+        const next = applyPackageTransfers(current.packages, current.parking, packageTransfers);
         const conveyorProgress = Math.max(
           0.12,
           current.conveyorProgress - CONVEYOR_PACKAGE_SPACING * next.loaded
@@ -92,9 +115,10 @@ export function useGame() {
         const status = getGameStatus(next.packages, next.parking, level.parkingSize, conveyorProgress);
         return { ...current, packages: next.packages, parking: next.parking, conveyorProgress, status };
       });
-    }, 180);
+      setPackageTransfers([]);
+    }, 680);
     return () => window.clearTimeout(timer);
-  }, [level.parkingSize, state.packages, state.parking, state.status, visiblePackageCount]);
+  }, [level.parkingSize, packageTransfers]);
 
   useEffect(() => {
     const interval = window.setInterval(() => {
@@ -111,6 +135,8 @@ export function useGame() {
   useEffect(() => {
     if (state.status === "lost") {
       setIsProcessing(false);
+      setPackageTransfers([]);
+      setMovingTruckIds([]);
       telegram.error();
     }
     if (state.status === "won") {
@@ -124,6 +150,8 @@ export function useGame() {
     setState(createInitialState(level));
     setFeedback(null);
     setIsProcessing(false);
+    setMovingTruckIds([]);
+    setPackageTransfers([]);
   }, [level]);
 
   const openLevel = useCallback((index: number) => {
@@ -135,10 +163,12 @@ export function useGame() {
     setState(createInitialState(level));
     setFeedback(null);
     setIsProcessing(false);
+    setMovingTruckIds([]);
+    setPackageTransfers([]);
   }, [level]);
 
   return {
-    level, levelIndex, state, feedback, isProcessing,
+    level, levelIndex, state, feedback, isProcessing, movingTruckIds, packageTransfers,
     selectTruck, restart,
     nextLevel: () => openLevel(levelIndex + 1),
     previousLevel: () => openLevel(levelIndex - 1),
