@@ -1,31 +1,29 @@
+import type { CSSProperties } from "react";
 import type { ParkingTruck, Truck as TruckType, TruckColor } from "../../game/types";
 
 export const colorSymbols: Record<TruckColor, string> = {
   red: "●", blue: "■", green: "▲", yellow: "★"
 };
-const arrows = {
-  up: "↑",
-  down: "↓",
-  left: "←",
-  right: "→",
-  "up-left": "↖",
-  "up-right": "↗",
-  "down-left": "↙",
-  "down-right": "↘"
-};
-
 type FieldProps = { truck: TruckType; blocked: boolean; onClick: () => void };
 
 export function Truck({ truck, blocked, onClick }: FieldProps) {
+  const width = truck.capacity === 10 ? "190%" : truck.capacity === 6 ? "145%" : "100%";
+  const style = {
+    gridRow: truck.row + 1,
+    gridColumn: truck.col + 1,
+    "--truck-width": width
+  } as CSSProperties;
+
   return (
     <button
       className={`truck truck--${truck.color} truck--${truck.direction}${blocked ? " is-blocked" : ""}`}
-      style={{ gridRow: truck.row + 1, gridColumn: truck.col + 1 }}
+      style={style}
       onClick={onClick}
       aria-label={`${truck.color} truck, points ${truck.direction}`}
     >
       <span className="truck__cargo">{colorSymbols[truck.color]}</span>
-      <span className="truck__arrow">{arrows[truck.direction]}</span>
+      <span className="truck__arrow">→</span>
+      <span className="truck__capacity">{truck.capacity}</span>
       <i className="truck__cab" />
       <i className="truck__wheel truck__wheel--one" />
       <i className="truck__wheel truck__wheel--two" />
