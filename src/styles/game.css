@@ -316,7 +316,7 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; }
 @keyframes danger-pulse { to { box-shadow: inset 0 0 20px #ef5b5b2e, 0 0 0 2px #ef5b5b55; } }
 @keyframes tutorial-pulse {
   from { filter: brightness(1) drop-shadow(0 0 2px #fff); }
-  to { filter: brightness(1.14) drop-shadow(0 0 9px #ffd739); transform: scale(1.08); }
+  to { filter: brightness(1.16) drop-shadow(0 0 10px #ffd739); }
 }
 @keyframes package-flight {
   0% { opacity: .35; transform: translate(-50%, -50%) translate(0, 0) scale(.72) rotate(-12deg); }
