@@ -7,7 +7,7 @@ export type PackageResult = {
   loaded: number;
   transfers: PackageTransfer[];
 };
-export const CONVEYOR_PACKAGE_SPACING = 0.068;
+export const CONVEYOR_PACKAGE_SPACING = 0.05;
 export const CONVEYOR_FOG_THRESHOLD = 0.22;
 
 export function getVisiblePackageCount(
