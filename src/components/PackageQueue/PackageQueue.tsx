@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { CONVEYOR_PACKAGE_SPACING } from "../../game/packageProcessing";
 import type { LevelConfig, PackageItem } from "../../game/types";
 import { colorSymbols } from "../Truck/Truck";
 
@@ -34,8 +35,8 @@ export function PackageQueue({ packages, level, progress }: {
   const movingPackages = useMemo(() => packages.map((item, index) => ({
     item,
     index,
-    point: pointOnRoute(level.conveyorPoints, progress - index * 0.068),
-    visible: progress - index * 0.068 >= 0
+    point: pointOnRoute(level.conveyorPoints, progress - index * CONVEYOR_PACKAGE_SPACING),
+    visible: progress - index * CONVEYOR_PACKAGE_SPACING >= 0
   })), [level.conveyorPoints, packages, progress]);
 
   return (

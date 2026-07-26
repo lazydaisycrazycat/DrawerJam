@@ -2,13 +2,17 @@ import { useCallback, useEffect, useState } from "react";
 import { createInitialState } from "../game/createInitialState";
 import { levels } from "../game/levels";
 import { addTruckToParking, canTruckExit, hasParkingSpace, removeTruckFromField } from "../game/movement";
-import { canProcessNextPackage, processPackageWave } from "../game/packageProcessing";
+import {
+  canProcessNextPackage,
+  CONVEYOR_PACKAGE_SPACING,
+  getVisiblePackageCount,
+  processPackageWave
+} from "../game/packageProcessing";
 import { getGameStatus } from "../game/winLoseConditions";
 import { useTelegram } from "./useTelegram";
 
 type Feedback = { kind: "truck" | "parking"; id: string } | null;
 const storageKey = "parcel-jam-progress";
-const packageSpacing = 0.068;
 
 function readUnlockedLevel(): number {
   try {
@@ -36,6 +40,7 @@ export function useGame() {
   const [feedback, setFeedback] = useState<Feedback>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const telegram = useTelegram();
+  const visiblePackageCount = getVisiblePackageCount(state.packages, state.conveyorProgress);
 
   const flash = useCallback((next: Feedback) => {
     setFeedback(next);
@@ -59,27 +64,37 @@ export function useGame() {
     const trucks = removeTruckFromField(state.trucks, truck.id);
     const addedParking = addTruckToParking(state.parking, truck);
     setState({ ...state, trucks, parking: addedParking, status: "playing" });
-    if (canProcessNextPackage(state.packages, addedParking)) setIsProcessing(true);
+    if (canProcessNextPackage(state.packages, addedParking, visiblePackageCount)) setIsProcessing(true);
     telegram.impact();
-  }, [flash, level, state, telegram]);
+  }, [flash, level, state, telegram, visiblePackageCount]);
 
   useEffect(() => {
-    if (state.status !== "playing" || !canProcessNextPackage(state.packages, state.parking)) {
+    if (
+      state.status !== "playing" ||
+      !canProcessNextPackage(state.packages, state.parking, visiblePackageCount)
+    ) {
       setIsProcessing(false);
       return;
     }
     setIsProcessing(true);
     const timer = window.setTimeout(() => {
       setState((current) => {
-        if (current.status !== "playing" || !canProcessNextPackage(current.packages, current.parking)) return current;
-        const next = processPackageWave(current.packages, current.parking);
-        const conveyorProgress = Math.max(0.12, current.conveyorProgress - packageSpacing * next.loaded);
+        const currentVisibleCount = getVisiblePackageCount(current.packages, current.conveyorProgress);
+        if (
+          current.status !== "playing" ||
+          !canProcessNextPackage(current.packages, current.parking, currentVisibleCount)
+        ) return current;
+        const next = processPackageWave(current.packages, current.parking, currentVisibleCount);
+        const conveyorProgress = Math.max(
+          0.12,
+          current.conveyorProgress - CONVEYOR_PACKAGE_SPACING * next.loaded
+        );
         const status = getGameStatus(next.packages, next.parking, level.parkingSize, conveyorProgress);
         return { ...current, packages: next.packages, parking: next.parking, conveyorProgress, status };
       });
     }, 180);
     return () => window.clearTimeout(timer);
-  }, [level.parkingSize, state.packages, state.parking, state.status]);
+  }, [level.parkingSize, state.packages, state.parking, state.status, visiblePackageCount]);
 
   useEffect(() => {
     const interval = window.setInterval(() => {
