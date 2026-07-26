@@ -64,6 +64,7 @@ export function PackageQueue({ packages, level, progress, transfers }: {
           {movingPackages.map(({ item, index, point, visible }) => visible && (
             <g
               className={`moving-package moving-package--${item.color}${index === 0 ? " is-first" : ""}${transfers.some((transfer) => transfer.packageId === item.id) ? " is-loading" : ""}`}
+              data-package-id={item.id}
               key={item.id}
               transform={`translate(${point.x} ${point.y})`}
             >
