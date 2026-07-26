@@ -71,6 +71,33 @@ export default function App() {
     element.style.setProperty("--approach-y", `${to.bottom + 28 - startY}px`);
     element.style.setProperty("--travel-x", `${targetX - startX}px`);
     element.style.setProperty("--travel-y", `${targetY - startY}px`);
+
+    const route = [
+      { x: 0, y: 0, angle: startAngle, scale: 1 },
+      { x: exitX - startX, y: exitY - startY, angle: startAngle, scale: 1 },
+      { x: sideX - startX, y: cornerY - startY, angle: cornerAngle, scale: 0.94 },
+      { x: targetX - startX, y: cornerY - startY, angle: routeAngle, scale: 0.9 },
+      { x: targetX - startX, y: to.bottom + 28 - startY, angle: approachAngle, scale: 0.86 },
+      { x: targetX - startX, y: targetY - startY, angle: approachAngle, scale: 0.78 }
+    ];
+    const segmentLengths = route.slice(1).map((point, index) =>
+      Math.hypot(point.x - route[index].x, point.y - route[index].y)
+    );
+    const routeLength = segmentLengths.reduce((sum, length) => sum + length, 0);
+    let travelled = 0;
+    const offsets = route.map((_, index) => {
+      if (index > 0) travelled += segmentLengths[index - 1];
+      return routeLength ? travelled / routeLength : index / (route.length - 1);
+    });
+    element.style.animation = "none";
+    element.animate(
+      route.map((point, index) => ({
+        offset: offsets[index],
+        opacity: index === route.length - 1 ? 0.72 : 1,
+        transform: `translate(${point.x}px, ${point.y}px) rotate(${point.angle}deg) scale(${point.scale})`
+      })),
+      { duration: 1320, easing: "linear", fill: "forwards" }
+    );
   }
   return (
     <main className="app-shell">
