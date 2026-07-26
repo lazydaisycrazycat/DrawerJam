@@ -106,11 +106,11 @@ export default function App() {
         opacity: index === route.length - 1 ? 0.72 : 1,
         transform: `translate(${point.x}px, ${point.y}px) rotate(${point.angle}deg) scale(${point.scale})`
       })),
-      { duration: 1320, easing: "linear", fill: "forwards" }
+      { duration: 1120, easing: "linear", fill: "forwards" }
     );
   }
   return (
-    <main className="app-shell">
+    <main className={`app-shell${game.fastFinish ? " is-fast-finish" : ""}`}>
       <GameHeader level={game.level.id} onPrevious={game.previousLevel} />
       <PackageQueue
         packages={game.state.packages}

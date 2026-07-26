@@ -196,6 +196,7 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; }
   animation: package-flight .68s cubic-bezier(.22,.7,.18,1) forwards;
   will-change: transform, opacity;
 }
+.app-shell.is-fast-finish .package-flight { animation-duration: .34s; }
 .package-flight::before, .package-flight::after { content: ""; position: absolute; background: #ffffff88; }
 .package-flight::before { inset-block: 0; left: 8px; width: 3px; }
 .package-flight::after { inset-inline: 0; top: 8px; height: 3px; }
@@ -399,7 +400,7 @@ button { font: inherit; -webkit-tap-highlight-color: transparent; }
     animation: none !important;
   }
   .package-flight { animation-duration: .85s; }
-  .truck.is-exiting { animation-duration: 1.32s; }
+  .truck.is-exiting { animation-duration: 1.12s; }
   .parked-truck { animation-duration: .2s; }
   .truck.is-blocked { animation-duration: .65s; }
 }
