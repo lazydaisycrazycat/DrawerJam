@@ -8,9 +8,21 @@ export type PackageResult = {
   transfers: PackageTransfer[];
 };
 export const CONVEYOR_PACKAGE_SPACING = 0.068;
+export const CONVEYOR_FOG_THRESHOLD = 0.22;
 
-export function getVisiblePackageCount(packages: PackageItem[], conveyorProgress: number): number {
-  return Math.min(packages.length, Math.floor(conveyorProgress / CONVEYOR_PACKAGE_SPACING) + 1);
+export function getVisiblePackageCount(
+  packages: PackageItem[],
+  conveyorProgress: number,
+  fogCleared = false
+): number {
+  const loadingThreshold = fogCleared ? 0 : CONVEYOR_FOG_THRESHOLD;
+  return Math.max(
+    0,
+    Math.min(
+      packages.length,
+      Math.floor((conveyorProgress - loadingThreshold) / CONVEYOR_PACKAGE_SPACING) + 1
+    )
+  );
 }
 
 export function canProcessNextPackage(

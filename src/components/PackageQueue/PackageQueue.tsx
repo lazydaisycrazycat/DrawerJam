@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { CONVEYOR_PACKAGE_SPACING } from "../../game/packageProcessing";
+import { CONVEYOR_FOG_THRESHOLD, CONVEYOR_PACKAGE_SPACING } from "../../game/packageProcessing";
 import type { PackageTransfer } from "../../game/packageProcessing";
 import type { LevelConfig, PackageItem } from "../../game/types";
 import { colorSymbols } from "../Truck/Truck";
@@ -27,11 +27,13 @@ function pointOnRoute(points: Point[], progress: number): Point {
   return points.at(-1) ?? { x: 0, y: 0 };
 }
 
-export function PackageQueue({ packages, level, progress, transfers }: {
+export function PackageQueue({ packages, level, progress, transfers, fogCleared, onClearFog }: {
   packages: PackageItem[];
   level: LevelConfig;
   progress: number;
   transfers: PackageTransfer[];
+  fogCleared: boolean;
+  onClearFog: () => void;
 }) {
   const route = level.conveyorPoints.map(({ x, y }) => `${x},${y}`).join(" ");
   const movingPackages = useMemo(() => packages.map((item, index) => ({
@@ -47,7 +49,7 @@ export function PackageQueue({ packages, level, progress, transfers }: {
         <h2>Incoming packages</h2>
         <span>{packages.length} left</span>
       </div>
-      <div className={`conveyor${progress > 0.82 ? " conveyor--danger" : ""}`}>
+      <div className={`conveyor${progress > 0.82 ? " conveyor--danger" : ""}${fogCleared ? " conveyor--fog-cleared" : ""}`}>
         <svg viewBox="0 0 360 210" role="img" aria-label="Moving package conveyor">
           <polyline className="conveyor-shadow" points={route} />
           <polyline className="conveyor-belt" points={route} />
@@ -63,7 +65,7 @@ export function PackageQueue({ packages, level, progress, transfers }: {
           </g>
           {movingPackages.map(({ item, index, point, visible }) => visible && (
             <g
-              className={`moving-package moving-package--${item.color}${index === 0 ? " is-first" : ""}${transfers.some((transfer) => transfer.packageId === item.id) ? " is-loading" : ""}`}
+              className={`moving-package moving-package--${item.color}${index === 0 ? " is-first" : ""}${progress - index * CONVEYOR_PACKAGE_SPACING < CONVEYOR_FOG_THRESHOLD ? " is-fogged" : ""}${transfers.some((transfer) => transfer.packageId === item.id) ? " is-loading" : ""}`}
               data-package-id={item.id}
               key={item.id}
               transform={`translate(${point.x} ${point.y})`}
@@ -73,7 +75,12 @@ export function PackageQueue({ packages, level, progress, transfers }: {
               <text x="0" y="4">{colorSymbols[item.color]}</text>
             </g>
           ))}
+          <polyline className="conveyor-fog" pathLength="1" points={route} />
         </svg>
+        <button className="fog-bonus" onClick={onClearFog} disabled={fogCleared}>
+          <span>{fogCleared ? "5s" : "FOG"}</span>
+          {fogCleared ? "Open" : "Clear"}
+        </button>
         <div className="danger-meter">
           <span>SAFE</span>
           <i><b style={{ width: `${progress * 100}%` }} /></i>
