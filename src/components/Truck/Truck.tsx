@@ -3,7 +3,16 @@ import type { ParkingTruck, Truck as TruckType, TruckColor } from "../../game/ty
 export const colorSymbols: Record<TruckColor, string> = {
   red: "●", blue: "■", green: "▲", yellow: "★"
 };
-const arrows = { up: "↑", down: "↓", left: "←", right: "→" };
+const arrows = {
+  up: "↑",
+  down: "↓",
+  left: "←",
+  right: "→",
+  "up-left": "↖",
+  "up-right": "↗",
+  "down-left": "↙",
+  "down-right": "↘"
+};
 
 type FieldProps = { truck: TruckType; blocked: boolean; onClick: () => void };
 

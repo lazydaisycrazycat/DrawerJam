@@ -3,7 +3,14 @@ import type { LevelConfig, ParkingTruck, Truck } from "./types";
 export function canTruckExit(truck: Truck, allTrucks: Truck[], rows: number, cols: number): boolean {
   const occupied = new Set(allTrucks.filter((item) => item.id !== truck.id).map((item) => `${item.row}:${item.col}`));
   const [dr, dc] = {
-    up: [-1, 0], down: [1, 0], left: [0, -1], right: [0, 1]
+    up: [-1, 0],
+    down: [1, 0],
+    left: [0, -1],
+    right: [0, 1],
+    "up-left": [-1, -1],
+    "up-right": [-1, 1],
+    "down-left": [1, -1],
+    "down-right": [1, 1]
   }[truck.direction];
   for (let row = truck.row + dr, col = truck.col + dc; row >= 0 && row < rows && col >= 0 && col < cols; row += dr, col += dc) {
     if (occupied.has(`${row}:${col}`)) return false;

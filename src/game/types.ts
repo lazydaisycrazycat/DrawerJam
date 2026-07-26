@@ -1,5 +1,13 @@
 export type TruckColor = "red" | "blue" | "green" | "yellow";
-export type Direction = "up" | "down" | "left" | "right";
+export type Direction =
+  | "up"
+  | "down"
+  | "left"
+  | "right"
+  | "up-left"
+  | "up-right"
+  | "down-left"
+  | "down-right";
 export type GameStatus = "playing" | "won" | "lost";
 
 export type Truck = {
